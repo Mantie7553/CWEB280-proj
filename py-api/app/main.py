@@ -3,6 +3,9 @@ from config import ALLOW_ORIGINS
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 
+# this file is the API server and allows for the connection to our front end.
+# Might not even need the app.get here and it should still work if that was moved to another file
+
 app = FastAPI()
 
 app.add_middleware(

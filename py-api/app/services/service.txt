@@ -1,0 +1,3 @@
+placeholder
+Files in this directory will be functions that are called in the API endpoints
+Like controllers or handlers for what happens when an API call is made

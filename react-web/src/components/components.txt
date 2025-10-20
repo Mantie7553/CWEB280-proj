@@ -1,0 +1,3 @@
+placeholder
+Add component files to this folder
+Any smaller part of a website that could be reused should go here

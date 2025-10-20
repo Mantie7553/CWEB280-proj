@@ -1,0 +1,1 @@
+// Possible home page. Placeholder so that /routes could be added
