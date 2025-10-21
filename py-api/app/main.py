@@ -1,10 +1,12 @@
 from fastapi import FastAPI
-from config import ALLOW_ORIGINS
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from starlette.middleware.cors import CORSMiddleware
+
+from api import sample_endpoints
+from config import ALLOW_ORIGINS
 
 # this file is the API server and allows for the connection to our front end.
-# Might not even need the app.get here and it should still work if that was moved to another file
+# Might not even need the app.get here, and it should still work if that was moved to another file
 
 app = FastAPI()
 
@@ -15,6 +17,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(sample_endpoints.router)
 
 @app.get("/")
 async def root():

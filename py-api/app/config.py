@@ -8,4 +8,5 @@ DB_PATH = "sqlite:///./my.db"
 # A list of allowed connections, add url to list if others are needed
 ALLOW_ORIGINS = [
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]

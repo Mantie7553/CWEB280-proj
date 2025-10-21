@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import '../styles/App.css'
 import {replace} from "react-router-dom";
 
@@ -10,6 +8,8 @@ function App() {
   return (
     <>
         <button onClick={simpleFetch} type="button">Click me to confirm connection</button>
+        <button onClick={loadTeams} type="button">Click me to load teams</button>
+        <button onClick={fetchTeams}>Click me to see teams from the db</button>
     </>
   )
 }
@@ -18,6 +18,25 @@ function simpleFetch() {
     fetch('http://localhost:8080')
         .then((resp) => resp.json())
         .then((data) => alert(data.message))
+}
+
+function fetchTeams()
+{
+    fetch('http://localhost:8080/api/teams')
+        .then((resp) => resp.json())
+        .then((data) => {
+            for (const team of data)
+            {
+                alert(`Team ${team.id}: ${team.name}. ${team.logo}`)
+            }
+        })
+}
+
+function loadTeams()
+{
+    fetch('http://localhost:8080/api/load')
+        .then((resp) => resp.json())
+        .then(() => console.log('Loaded'))
 }
 
 export default App
