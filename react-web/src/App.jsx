@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import '../styles/App.css'
 import {replace} from "react-router-dom";
 
 function App() {
@@ -9,7 +8,7 @@ function App() {
     <>
         <button onClick={simpleFetch} type="button">Click me to confirm connection</button>
         <button onClick={loadTeams} type="button">Click me to load teams</button>
-        <button onClick={fetchTeams}>Click me to see teams from the db</button>
+        <button onClick={fetchTeams} type="button">Click me to see teams from the db</button>
     </>
   )
 }
