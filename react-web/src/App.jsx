@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import {replace} from "react-router-dom";
+import {BrowserRouter, replace} from "react-router-dom";
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
+    <BrowserRouter>
         <button onClick={simpleFetch} type="button">Click me to confirm connection</button>
         <button onClick={loadTeams} type="button">Click me to load teams</button>
         <button onClick={fetchTeams} type="button">Click me to see teams from the db</button>
-    </>
+    </BrowserRouter>
   )
 }
 

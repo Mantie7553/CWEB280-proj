@@ -20,6 +20,7 @@ app.add_middleware(
 
 app.include_router(sample_endpoints.router)
 
+# remove endpoint before submission
 @app.get("/")
 async def root():
     return {"message": "Connected to API successfully"}

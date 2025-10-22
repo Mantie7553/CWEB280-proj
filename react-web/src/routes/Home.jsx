@@ -1,1 +1,8 @@
-// Possible home page. Placeholder so that /routes could be added
+
+export default function Home() {
+    return (
+        <>
+            <p>Home</p>
+        </>
+    )
+}
