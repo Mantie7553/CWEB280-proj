@@ -34,6 +34,9 @@ def add_game(data: GameData):
         if homeTeam is None or awayTeam is None:
             return {"error": "Home or away team not found"}
 
+        if homeTeam is awayTeam:
+            return {"error": "Home and away teams must be different"}
+
         gameDate = datetime.fromisoformat(data.dateTime).date()
 
         game = Game(
@@ -49,8 +52,8 @@ def add_game(data: GameData):
         session.refresh(game)
         return {
             "id": game.id,
-            "homeTeam": homeTeam.id,
-            "awayTeam": awayTeam.id,
+            "homeTeam": homeTeam.name,
+            "awayTeam": awayTeam.name,
             "homeScore": game.homeScore,
             "awayScore": game.awayScore
         }

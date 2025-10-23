@@ -7,6 +7,26 @@ export default function DataEntry() {
     const [homeScore, setHomeScore] = useState(0);
     const [awayTeam, setAwayTeam] = useState('Default Team');
     const [awayScore, setAwayScore] = useState(0);
+    // will be replaced with actual teams from the database
+    const teamArray = ["Default","Toronto Raptors", "Indiana Pacers", "Golden State Warriors"];
+    const sections = [
+        {
+            title:"Home Team",
+            team: homeTeam,
+            setTeam: setHomeTeam,
+            score: homeScore,
+            setScore: setHomeScore,
+            teams:teamArray
+        },
+        {
+            title:"Away Team",
+            team: awayTeam,
+            setTeam: setAwayTeam,
+            score: awayScore,
+            setScore: setAwayScore,
+            teams:teamArray
+        }
+    ];
 
     const handleClear = () => {
         setDateTime('');
@@ -37,12 +57,14 @@ export default function DataEntry() {
                 return resp.json();
             })
             .then(data => {
-                if (data.error) {
-                    throw new Error("Unexpected Error from Server")
+                if(data.error) {
+                    throw new Error(data.error)
                 }
                 if (data.id)
                 {
-                    alert(`Game ${data.id} Information Saved`);
+                    alert(`Game ${data.id} Information Saved\n
+                    ${data.awayTeam} AT ${data.homeTeam}`);
+                    handleClear();
                 }
             })
             .catch(err => {
@@ -52,6 +74,7 @@ export default function DataEntry() {
 
     return (
         <div className="p-8">
+
             <div className="flex items-center justify-between gap-8 mb-8">
                 <label className="text-2xl font-bold whitespace-nowrap">
                     Date / Time
@@ -65,73 +88,44 @@ export default function DataEntry() {
                 />
             </div>
 
-            <div className="mb-8">
-                <h2 className="text-2xl font-bold text-center mb-8">
-                    Home Team
-                </h2>
-                <div className="flex gap-8">
-                    <div className="flex-1">
-                        <label className="block mb-3">
-                            Name
-                        </label>
-                        <select
-                            value={homeTeam}
-                            onChange={(e) => setHomeTeam(e.target.value)}
-                        >
-                            <option>Default Team</option>
-                            <option>Toronto Raptors</option>
-                            <option>Team Two</option>
-                            <option>Team Three</option>
-                        </select>
-                    </div>
+            {sections.map((section, index) => {
+                return (
+                        <div key={index} className="mb-8">
+                            <h2 className="text-2xl font-bold text-center mb-8">
+                                {section.title}
+                            </h2>
+                            <div className="flex gap-8">
+                                <div className="flex-1">
+                                    <label className="block mb-3">
+                                        Name
+                                    </label>
+                                    <select
+                                        value={section.team}
+                                        onChange={(e) => section.setTeam(e.target.value)}
+                                    >
+                                        {section.teams.map(teamOption => {
+                                            return (
+                                                    <option key={teamOption}>{teamOption}</option>
+                                                )
+                                        })}
+                                    </select>
+                                </div>
 
-                    <div className="flex-1">
-                        <label className="block mb-3">
-                            Score
-                        </label>
-                        <input
-                            type="number"
-                            value={homeScore}
-                            onChange={(e) => setHomeScore(parseInt(e.target.value))}
-                            placeholder={0}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div className="mb-8">
-                <h2 className="text-2xl font-bold text-center mb-8">
-                    Away Team
-                </h2>
-                <div className="flex gap-8">
-                    <div className="flex-1">
-                        <label className="block mb-3">
-                            Name
-                        </label>
-                        <select
-                            value={awayTeam}
-                            onChange={(e) => setAwayTeam(e.target.value)}
-                        >
-                            <option>Default Team</option>
-                            <option>Indiana Pacers</option>
-                            <option>Team Two</option>
-                            <option>Team Three</option>
-                        </select>
-                    </div>
-
-                    <div className="flex-1">
-                        <label className="block mb-3">
-                            Score
-                        </label>
-                        <input
-                            type="number"
-                            value={awayScore}
-                            onChange={(e) => setAwayScore(parseInt(e.target.value))}
-                            placeholder={0}
-                        />
-                    </div>
-                </div>
-            </div>
+                                <div className="flex-1">
+                                    <label className="block mb-3">
+                                        Score
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={section.score}
+                                        onChange={(e) => section.setScore(parseInt(e.target.value))}
+                                        placeholder={"0"}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )
+            })}
 
             <div className="flex gap-6 justify-center">
                 <button onClick={handleSave}>

@@ -8,6 +8,7 @@ router = APIRouter(prefix="/api/game", tags=["api"])
 async def post_game(data: GameData):
     return add_game(data)
 
+# TESTING PURPOSES -- to see what is in the database and how it is returned
 @router.get("")
 async def get_games():
     return query_games()
