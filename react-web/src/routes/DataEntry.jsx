@@ -1,7 +1,8 @@
 import {useState} from "react";
+import TeamAdd from "../components/TeamAdd.jsx";
 
 export default function DataEntry() {
-
+    const [showModal, setShowModal] = useState(false);
     const [dateTime, setDateTime] = useState('');
     const [homeTeam, setHomeTeam] = useState('Default Team');
     const [homeScore, setHomeScore] = useState(0);
@@ -85,6 +86,7 @@ export default function DataEntry() {
                     onChange={(e) => setDateTime(e.target.value)}
                     className="flex-1"
                     placeholder={"Date / Time"}
+                    required
                 />
             </div>
 
@@ -102,6 +104,7 @@ export default function DataEntry() {
                                     <select
                                         value={section.team}
                                         onChange={(e) => section.setTeam(e.target.value)}
+                                        required
                                     >
                                         {section.teams.map(teamOption => {
                                             return (
@@ -109,6 +112,9 @@ export default function DataEntry() {
                                                 )
                                         })}
                                     </select>
+                                    <button type="button" onClick={() => setShowModal(true)}>
+                                        Don't see the team you need? Add one
+                                    </button>
                                 </div>
 
                                 <div className="flex-1">
@@ -120,6 +126,7 @@ export default function DataEntry() {
                                         value={section.score}
                                         onChange={(e) => section.setScore(parseInt(e.target.value))}
                                         placeholder={"0"}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -135,6 +142,11 @@ export default function DataEntry() {
                     CLEAR
                 </button>
             </div>
+
+            <TeamAdd
+                isOpen={showModal}
+                onClose={() => {setShowModal(false)}}
+            />
         </div>
     )
 }
