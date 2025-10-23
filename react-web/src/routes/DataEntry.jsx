@@ -19,7 +19,7 @@ export default function DataEntry() {
     // Handles the sending of data to the API to be saved into the database
     const handleSave = () => {
 
-        fetch(`${import.meta.env.API_BASE_URL}/games/add`, {
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/game/add`, {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -79,7 +79,7 @@ export default function DataEntry() {
                             onChange={(e) => setHomeTeam(e.target.value)}
                         >
                             <option>Default Team</option>
-                            <option>Team One</option>
+                            <option>Toronto Raptors</option>
                             <option>Team Two</option>
                             <option>Team Three</option>
                         </select>
@@ -113,7 +113,7 @@ export default function DataEntry() {
                             onChange={(e) => setAwayTeam(e.target.value)}
                         >
                             <option>Default Team</option>
-                            <option>Team One</option>
+                            <option>Indiana Pacers</option>
                             <option>Team Two</option>
                             <option>Team Three</option>
                         </select>

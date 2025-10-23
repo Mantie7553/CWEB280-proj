@@ -1,3 +1,0 @@
-placeholder
-This folder will contain files for outlining the database structure
-Similar to the models or create tables we have done in other classes

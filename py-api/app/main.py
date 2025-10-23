@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from api import sample_endpoints
+from api import sample_endpoints, create_game_endpoints
 from config import ALLOW_ORIGINS
 
 # this file is the API server and allows for the connection to our front end.
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(sample_endpoints.router)
+app.include_router(create_game_endpoints.router)
 
 # remove endpoint before submission
 @app.get("/")

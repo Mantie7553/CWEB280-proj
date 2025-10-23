@@ -1,2 +1,0 @@
-placeholder
-All endpoint files, where we make calls to the api will be stored in this directory
