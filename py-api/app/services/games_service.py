@@ -1,5 +1,7 @@
+import math
+
 from sqlalchemy import  create_engine
-from sqlalchemy.orm import Session, Query
+from sqlalchemy.orm import Session, aliased
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -20,6 +22,65 @@ class GameData(BaseModel):
 def query_games():
     with Session(engine) as session:
         return session.query(Game).all()
+
+def paged_games(page: int):
+    with Session(engine) as session:
+        offset = (page -1) * 5
+        totalGames = session.query(Game).count()
+        pageCount = math.ceil(totalGames / 5)
+
+        if page < 1 or page > pageCount:
+            return {
+                "games": [],
+                "totalGames": totalGames,
+                "pageCount": pageCount,
+                "page": page,
+                "error": "Invalid page number"
+            }
+
+        homeTeam = aliased(Team)
+        awayTeam = aliased(Team)
+
+
+        games = session.query(
+            Game,
+            homeTeam.name,
+            awayTeam.name,
+        )\
+            .join(homeTeam, Game.homeTeam == homeTeam.id)\
+            .join(awayTeam, Game.awayTeam == awayTeam.id)\
+            .offset(offset).limit(5).all()
+
+    #Query returns something like the following
+    #       (gameInfo1, homeTeam, awayTeam), (gameInfo2, homeTeam, awayTeam), ...
+    # so we access them as:
+    #  game[0] = gameInfo
+    #  game[1] = homeTeam
+    #  game[2] = awayTeam
+        formattedGames = [
+            {
+                "id": game[0].id,
+                "gameDate": game[0].gameDate.isoformat(),
+                "homeTeam": {
+                    "id": game[0].homeTeam,
+                    "name": game[1]
+                },
+                "awayTeam": {
+                    "id": game[0].awayTeam,
+                    "name": game[2]
+                },
+                "homeScore": game[0].homeScore,
+                "awayScore": game[0].awayScore
+            }
+            for game in games
+        ]
+
+        return {
+            "games": formattedGames,
+            "totalGames": totalGames,
+            "pageCount": pageCount,
+            "page": page
+        }
 
 
 def add_game(data: GameData):
