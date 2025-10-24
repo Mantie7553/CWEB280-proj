@@ -19,3 +19,4 @@ async def get_games():
 @router.get("/{page}")
 async def get_game_page(page: int):
     return paged_games(page=page)
+

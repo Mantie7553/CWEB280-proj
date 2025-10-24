@@ -45,29 +45,36 @@ def paged_games(page: int):
         games = session.query(
             Game,
             homeTeam.name,
+            homeTeam.logoFName,
             awayTeam.name,
+            awayTeam.logoFName,
         )\
             .join(homeTeam, Game.homeTeam == homeTeam.id)\
             .join(awayTeam, Game.awayTeam == awayTeam.id)\
             .offset(offset).limit(5).all()
 
     #Query returns something like the following
-    #       (gameInfo1, homeTeam, awayTeam), (gameInfo2, homeTeam, awayTeam), ...
+    #       (gameInfo1, homeTeam, homeTeamLogo, awayTeam, awayTeamLogo),
+    #               (gameInfo2, homeTeam, awayTeam), ...
     # so we access them as:
     #  game[0] = gameInfo
-    #  game[1] = homeTeam
-    #  game[2] = awayTeam
+    #  game[1] = homeTeamName
+    #  game[2] = homeTeamLogo
+    #  game[3] = awayTeamName
+    #  game[4] = awayTeamLogo
         formattedGames = [
             {
                 "id": game[0].id,
                 "gameDate": game[0].gameDate.isoformat(),
                 "homeTeam": {
                     "id": game[0].homeTeam,
-                    "name": game[1]
+                    "name": game[1],
+                    "logoFName": game[2]
                 },
                 "awayTeam": {
                     "id": game[0].awayTeam,
-                    "name": game[2]
+                    "name": game[3],
+                    "logoFName": game[4]
                 },
                 "homeScore": game[0].homeScore,
                 "awayScore": game[0].awayScore
