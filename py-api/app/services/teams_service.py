@@ -1,3 +1,6 @@
+import math
+
+from pydantic import BaseModel
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session, Query
 
@@ -18,10 +21,11 @@ def query_teams(teamName: str | None = None):
         return query.all()
 
 
-class TeamData:
+class TeamData(BaseModel):
     teamName: str
     teamLogoFName: str
 
+# adds a new team entry in the database if they do not already exist
 def add_team(data: TeamData):
     with Session(engine) as session:
         if query_teams(data.teamName):
@@ -40,7 +44,7 @@ def add_team(data: TeamData):
             }
         return {"error": "Team already exists"}
 
-
+# returns the total points a given team has scored as an int
 def total_points(teamName: str):
     with Session(engine) as session:
         team = session.query(Team).filter(Team.name == teamName).first()
@@ -59,7 +63,7 @@ def total_points(teamName: str):
 
         return totalPoints
 
-
+# returns the total number of games a team has played as both the home or away team
 def total_games(teamName: str):
     with Session(engine) as session:
         team = session.query(Team).filter(Team.name == teamName).first()
@@ -71,7 +75,7 @@ def total_games(teamName: str):
 
         return homeGames + awayGames
 
-
+# returns the total point difference for a given team
 def total_diff(teamName: str):
     with Session(engine) as session:
         team = session.query(Team).filter(Team.name == teamName).first()
@@ -93,20 +97,31 @@ def total_diff(teamName: str):
         return allPoints - opponentPoints
 
 
-
-
-def team_point_avg(teamName: str):
+def last_score(teamName: str):
     with Session(engine) as session:
-        pointTotal = total_points(teamName)
-        allGames = total_games(teamName)
+        team = session.query(Team).filter(Team.name == teamName).first()
+        if team is None:
+            return 0
+        recent = session.query(Game).filter(
+            or_(
+                Game.homeTeam == team.id,
+                Game.awayTeam == team.id
+            )
+        ).order_by(Game.gameDate.desc()).first()
+        return recent.homeScore if recent.homeTeam == team.id else recent.awayScore
 
-        if allGames == 0:
-            return {"avgPoints": 0}
+# calculates the point average for a given team based on games played
+def team_point_avg(teamName: str):
+    pointTotal = total_points(teamName)
+    allGames = total_games(teamName)
 
-        avgPoints = round(pointTotal / allGames, 2)
-        return {"avgPoints": avgPoints}
+    if allGames == 0:
+        return {"avgPoints": 0}
 
+    avgPoints = round(pointTotal / allGames, 2)
+    return {"avgPoints": avgPoints}
 
+# calculates a teams win rate by the number of games they had a better score than the opposite team
 def team_win_loss(teamName: str):
     with Session(engine) as session:
         team = session.query(Team).filter(Team.name == teamName).first()
@@ -133,14 +148,89 @@ def team_win_loss(teamName: str):
 
         return {"winRate": winRate}
 
-
+# calculates an average point differential for a given team based on games played
 def team_diff_avg(teamName: str):
+    allDiff = total_diff(teamName)
+    allGames = total_games(teamName)
+
+    if allGames == 0:
+        return {"avgDiff": 0}
+
+    return {"avgDiff": round(allDiff / allGames, 2)}
+
+# creates a list of the top 5 teams by win rate
+def top_teams():
+    allTeams = query_teams()
+    teamStats = []
+    for team in allTeams:
+        winRate = team_win_loss(team.name)
+
+        if "error" in winRate or winRate == 0:
+            continue
+
+        teamStats.append({
+            "id": team.id,
+            "name": team.name,
+            "logoFName": team.logoFName,
+            "winRate": winRate["winRate"]
+        })
+
+    teamStats.sort(key=lambda t: t["winRate"], reverse=True)
+    return {"teams": teamStats[:5]}
+
+# creates a list of all teams with their respective stats
+def team_with_stats():
+    allTeams = query_teams()
+    teamStats = []
+    for team in allTeams:
+        winRate = team_win_loss(team.name)
+        avgPoints = team_point_avg(team.name)
+        avgDiff = team_diff_avg(team.name)
+        lastScore = last_score(team.name)
+        teamStats.append({
+            "id": team.id,
+            "name": team.name,
+            "logoFName": team.logoFName,
+            "winRate": winRate["winRate"],
+            "avgPoints": avgPoints,
+            "avgDiff": avgDiff,
+            "lastScore": lastScore,
+        })
+        teamStats.sort(key=lambda t: t["name"])
+    return {"teams": teamStats}
+
+def team_with_stats_paged(page: int):
     with Session(engine) as session:
-        allDiff = total_diff(teamName)
-        allGames = total_games(teamName)
+        offset = (page - 1) * 5
+        totalTeams = len(query_teams())
+        pageCount = math.ceil(totalTeams / 5)
 
-        if allGames == 0:
-            return {"avgDiff": 0}
+        if page < 1 or page > pageCount:
+            return {
+                "teams": [],
+                "totalTeams": totalTeams,
+                "pageCount": pageCount,
+                "page": page,
+                "error": "Invalid page number"
+            }
 
-        return {"avgDiff": round(allDiff / allGames, 2)}
+    allTeams = query_teams()
+    teamStats = []
+    for team in allTeams:
+        winRate = team_win_loss(team.name)
+        avgPoints = team_point_avg(team.name)
+        avgDiff = team_diff_avg(team.name)
+        lastScore = last_score(team.name)
+        teamStats.append({
+            "id": team.id,
+            "name": team.name,
+            "logoFName": team.logoFName,
+            "winRate": winRate["winRate"],
+            "avgPoints": avgPoints,
+            "avgDiff": avgDiff,
+            "lastScore": lastScore,
+        })
+        teamStats.sort(key=lambda t: t["name"])
+    return {"teams": teamStats[offset : offset + 5]}
+
 
