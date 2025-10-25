@@ -96,7 +96,7 @@ def total_diff(teamName: str):
 
         return allPoints - opponentPoints
 
-
+# returns the last game score for a given team
 def last_score(teamName: str):
     with Session(engine) as session:
         team = session.query(Team).filter(Team.name == teamName).first()
@@ -108,6 +108,10 @@ def last_score(teamName: str):
                 Game.awayTeam == team.id
             )
         ).order_by(Game.gameDate.desc()).first()
+
+        if recent is None:
+            return 0
+
         return recent.homeScore if recent.homeTeam == team.id else recent.awayScore
 
 # calculates the point average for a given team based on games played
@@ -116,17 +120,17 @@ def team_point_avg(teamName: str):
     allGames = total_games(teamName)
 
     if allGames == 0:
-        return {"avgPoints": 0}
+        return 0
 
     avgPoints = round(pointTotal / allGames, 2)
-    return {"avgPoints": avgPoints}
+    return avgPoints
 
 # calculates a teams win rate by the number of games they had a better score than the opposite team
 def team_win_loss(teamName: str):
     with Session(engine) as session:
         team = session.query(Team).filter(Team.name == teamName).first()
         if team is None:
-            return {"error": "Team not found"}
+            return 0
 
         homeWins= session.query(Game).filter(and_(
             Game.homeTeam == team.id,
@@ -142,11 +146,11 @@ def team_win_loss(teamName: str):
         totalGames = total_games(teamName)
 
         if totalGames == 0:
-            return {"winRate": 0}
+            return 0
 
         winRate = round((homeWins + awayWins) / totalGames, 3)
 
-        return {"winRate": winRate}
+        return winRate
 
 # calculates an average point differential for a given team based on games played
 def team_diff_avg(teamName: str):
@@ -154,9 +158,9 @@ def team_diff_avg(teamName: str):
     allGames = total_games(teamName)
 
     if allGames == 0:
-        return {"avgDiff": 0}
+        return 0
 
-    return {"avgDiff": round(allDiff / allGames, 2)}
+    return round(allDiff / allGames, 2)
 
 # creates a list of the top 5 teams by win rate
 def top_teams():
@@ -165,14 +169,14 @@ def top_teams():
     for team in allTeams:
         winRate = team_win_loss(team.name)
 
-        if "error" in winRate or winRate == 0:
+        if winRate == 0:
             continue
 
         teamStats.append({
             "id": team.id,
             "name": team.name,
             "logoFName": team.logoFName,
-            "winRate": winRate["winRate"]
+            "winRate": winRate
         })
 
     teamStats.sort(key=lambda t: t["winRate"], reverse=True)
@@ -191,7 +195,7 @@ def team_with_stats():
             "id": team.id,
             "name": team.name,
             "logoFName": team.logoFName,
-            "winRate": winRate["winRate"],
+            "winRate": winRate,
             "avgPoints": avgPoints,
             "avgDiff": avgDiff,
             "lastScore": lastScore,
@@ -225,7 +229,7 @@ def team_with_stats_paged(page: int):
             "id": team.id,
             "name": team.name,
             "logoFName": team.logoFName,
-            "winRate": winRate["winRate"],
+            "winRate": winRate,
             "avgPoints": avgPoints,
             "avgDiff": avgDiff,
             "lastScore": lastScore,

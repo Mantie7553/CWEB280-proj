@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from typing import Optional
 
-from app.services.games_service import add_game, GameData, query_games, paged_games
-from app.services.teams_service import team_with_stats
+from fastapi import APIRouter, Query
+
+from app.services.games_service import add_game, GameData, query_games, paged_games, paged_games_with_stats
 
 router = APIRouter(prefix="/api/game", tags=["api"])
 
@@ -18,6 +19,11 @@ async def get_games():
 
 # returns a paged list of games based off of the path to the API, should be changed and have multiple ways to order
 @router.get("/{page}")
-async def get_game_page(page: int):
-    return paged_games(page=page)
+async def get_game_page(page: int, filter: Optional[str] = Query(None)):
+    return paged_games(page=page, filter_type = filter)
+
+#returns a paged list of games including a teams stats based off the path of the API
+@router.get("/stats/{page}")
+async def get_game_stats(page: int):
+    return paged_games_with_stats(page=page)
 

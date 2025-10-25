@@ -1,14 +1,6 @@
 
 
-export default function Team(team) {
-    // team =
-    //     {
-    //         "logoFName": "path/file.png",
-    //         "name": "Team Name",
-    //         "avgPoints": "95",
-    //         "avgDiff": "10.2",
-    //         "winRate": "0.55"
-    //     }
+export default function Team({team}) {
     return (
         <div>
             {team.logoFName && (

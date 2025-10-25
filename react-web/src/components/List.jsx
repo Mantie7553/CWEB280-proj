@@ -1,28 +1,35 @@
 import Team from "./Team.jsx";
 import Pages from "./Pages.jsx";
 import {useEffect, useState} from "react";
+import Game from "./Game.jsx";
 
 
 export default function List({sectionName}) {
 
     const[info, setInfo] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchList = () => {
+
+            setLoading(true);
+            setError(null);
+
             let url = '';
             switch (sectionName)
             {
                 case "TOP TEAMS":
-                    url = "url for top teams";
+                    url = `${import.meta.env.VITE_API_BASE_URL}/team/top`;
                     break;
                 case "UPCOMING":
-                    url = "url for upcoming games";
+                    url = `${import.meta.env.VITE_API_BASE_URL}/game/1?filter=upcoming`;
                     break;
                 case "RECENT":
-                    url = "url for recent games";
+                    url = `${import.meta.env.VITE_API_BASE_URL}/game/1?filter=recent`;
                     break;
                 case "GAMES":
-                    url = `${import.meta.env.VITE_API_BASE_URL}/game`;
+                    url = `${import.meta.env.VITE_API_BASE_URL}/game/stats/1`;
                     break;
                 case "TEAMS":
                     url = `${import.meta.env.VITE_API_BASE_URL}/team/stats`;
@@ -40,11 +47,44 @@ export default function List({sectionName}) {
                     else {
                         setInfo(data.games);
                     }
-                });
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    setError(err.message);
+                    setLoading(false);
+                    setInfo([]);
+                })
         };
 
         fetchList()
     }, [sectionName]);
+
+    if (loading) {
+        return (
+            <div>
+                <h2>{sectionName}</h2>
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div>
+                <h2>{sectionName}</h2>
+                <p> Error: {error}</p>
+            </div>
+        );
+    }
+
+    if (info.length === 0) {
+        return (
+            <div>
+                <h2>{sectionName}</h2>
+                <p>No data available</p>
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -53,13 +93,7 @@ export default function List({sectionName}) {
                 if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
                     return <Team key={item.id || index} team={item}/>
                 } else {
-                    return (
-                        <div>
-                            <p>{item.gameDate}</p>
-                            <p>{item.awayTeam?.name || `Team${item.awayTeam}`} AT {item.homeTeam?.name || `Team ${item.homeTeam}`}</p>
-                            <p>Score: {item.homeScore} - {item.awayScore}</p>
-                        </div>
-                    )
+                    return <Game key={item.id || index} game={item}/>
                 }
             })}
             {/*<Pages/>*/}
