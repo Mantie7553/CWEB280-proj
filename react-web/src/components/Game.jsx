@@ -7,8 +7,8 @@ export default function Game({game}) {
     const includesStats = homeTeam.winRate !== undefined || awayTeam.winRate !== undefined;
 
     return (
-        <>
-            <div id="basics">
+        <div className="lg:col-span-1 flex items-center py-4 px-6 bg-blue-800">
+            <div id="basics" className="flex items-center py-4 px-6">
                 {awayTeam.logoFName && (
                     <img src={awayTeam.logoFName} alt={`${awayTeam.name}-logo`}/>
                 )}
@@ -41,7 +41,7 @@ export default function Game({game}) {
                 )}
             </div>
             {includesStats && (
-                <div id="stats">
+                <div id="stats" className="flex items-center py-4 px-6 bg-blue-800">
                     <div>
                         <h3>WIN RATE</h3>
                         <p>{homeTeam.winRate}</p>
@@ -68,6 +68,6 @@ export default function Game({game}) {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     )
 }

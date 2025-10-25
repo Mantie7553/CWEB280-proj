@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import Game from "./Game.jsx";
 
 
-export default function List({sectionName}) {
+export default function List({sectionName, colSize}) {
 
     const[info, setInfo] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ export default function List({sectionName}) {
 
     if (loading) {
         return (
-            <div>
+            <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
                 <p>Loading...</p>
             </div>
@@ -70,7 +70,7 @@ export default function List({sectionName}) {
 
     if (error) {
         return (
-            <div>
+            <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
                 <p> Error: {error}</p>
             </div>
@@ -79,7 +79,7 @@ export default function List({sectionName}) {
 
     if (info.length === 0) {
         return (
-            <div>
+            <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
                 <p>No data available</p>
             </div>
@@ -87,7 +87,7 @@ export default function List({sectionName}) {
     }
 
     return (
-        <div>
+        <div className='bg-red-800 px-4 py-2 font-bold'>
             <h2>{sectionName}</h2>
             {info.map((item, index) => {
                 if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {

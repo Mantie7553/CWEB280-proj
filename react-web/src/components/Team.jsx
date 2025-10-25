@@ -2,7 +2,7 @@
 
 export default function Team({team}) {
     return (
-        <div>
+        <div className="flex items-center py-4 px-6 bg-blue-800">
             {team.logoFName && (
                 <img src={team.logoFName} alt={`${team.name}-logo`}/>
             )}

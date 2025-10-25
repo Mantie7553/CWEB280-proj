@@ -20,8 +20,7 @@ export default function Stats() {
     }
 
     return (
-        //TODO show games
-        <div>
+        <div className="grid grid-cols-1 gap-2">
             <List sectionName="GAMES"/>
             <List sectionName="TEAMS"/>
         </div>
