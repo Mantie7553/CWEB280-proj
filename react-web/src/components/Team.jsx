@@ -10,15 +10,29 @@ export default function Team(team) {
     //         "winRate": "0.55"
     //     }
     return (
-        <>
-            <h1>{team.logoFName}</h1>
-            <img src={team.logoFName} alt={`${team.name}-logo`}/>
-            <h3>AVG POINTS</h3>
-            <p>{team.avgPoints}</p>
-            <h3>AVG DIFF</h3>
-            <p>{team.avgDiff}</p>
-            <h3>WIN RATE</h3>
-            <p>{team.winRate}</p>
-        </>
+        <div>
+            {team.logoFName && (
+                <img src={team.logoFName} alt={`${team.name}-logo`}/>
+            )}
+            <h3>{team.name}</h3>
+            {team.avgPoints !== undefined && (
+                <div>
+                    <p>AVG POINTS</p>
+                    <p>{team.avgPoints}</p>
+                </div>
+            )}
+            {team.avgDiff !== undefined && (
+                <div>
+                    <p>AVG DIFF</p>
+                    <p>{team.avgDiff}</p>
+                </div>
+            )}
+            {team.winRate !== undefined && (
+                <div>
+                    <p>WIN RATE</p>
+                    <p>{(team.winRate * 100).toFixed(1)}%</p>
+                </div>
+            )}
+        </div>
     )
 }
