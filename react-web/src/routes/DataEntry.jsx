@@ -10,6 +10,7 @@ export default function DataEntry() {
     const [awayScore, setAwayScore] = useState(0);
     // will be replaced with actual teams from the database
     const teamArray = ["Default","Toronto Raptors", "Indiana Pacers", "Golden State Warriors"];
+
     const sections = [
         {
             title:"Home Team",

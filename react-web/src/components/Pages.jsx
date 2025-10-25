@@ -1,19 +1,34 @@
-export default function Pages([currentPage, setCurrentPage]) {
+export default function Pages({currentPage, setCurrentPage, totalPages}) {
+
+    const handlePrev = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage( currentPage + 1);
+        }
+    }
+
+    const handlePageClick = (pageNum) => {
+        setCurrentPage(pageNum);
+    }
 
     return (
         <div>
-            {'<< '}
+            <button onClick={handlePrev} disabled={currentPage === 1}>
+                {'<< '}
+            </button>
             {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
-                <span key={page}
-                      onClick={() => setCurrentPage(page)}
-                      style={{
-                          textDecoration: page === currentPage ? 'underline' : 'none'
-                      }}
-                >
+                <button key={page} onClick={() => handlePageClick(page)}>
                     {page}
-                </span>
+                </button>
             ))}
-            {' >>'}
+            <button onClick={handleNext} disabled={currentPage === 3}>
+                {' >>'}
+            </button>
         </div>
     )
 }

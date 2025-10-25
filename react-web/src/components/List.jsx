@@ -4,11 +4,14 @@ import {useEffect, useState} from "react";
 import Game from "./Game.jsx";
 
 
-export default function List({sectionName, colSize}) {
+export default function List({sectionName}) {
 
     const[info, setInfo] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
         const fetchList = () => {
@@ -29,10 +32,10 @@ export default function List({sectionName, colSize}) {
                     url = `${import.meta.env.VITE_API_BASE_URL}/game/1?filter=recent`;
                     break;
                 case "GAMES":
-                    url = `${import.meta.env.VITE_API_BASE_URL}/game/stats/1`;
+                    url = `${import.meta.env.VITE_API_BASE_URL}/game/stats/${currentPage}`;
                     break;
                 case "TEAMS":
-                    url = `${import.meta.env.VITE_API_BASE_URL}/team/stats`;
+                    url = `${import.meta.env.VITE_API_BASE_URL}/team/stats/${currentPage}`;
                     break;
             }
             fetch(url)
@@ -43,9 +46,13 @@ export default function List({sectionName, colSize}) {
                 .then((data) => {
                     if (data.teams) {
                         setInfo(data.teams);
+                        if (data.pageCount) setTotalPages(data.pageCount);
+                        if (data.totalTeams) setTotalItems(data.totalTeams);
                     }
                     else {
                         setInfo(data.games);
+                        if (data.pageCount) setTotalPages(data.pageCount);
+                        if (data.totalGames) setTotalItems(data.totalGames);
                     }
                     setLoading(false);
                 })
@@ -57,22 +64,33 @@ export default function List({sectionName, colSize}) {
         };
 
         fetchList()
-    }, [sectionName]);
+    }, [sectionName, currentPage]);
 
     if (loading) {
         return (
             <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
-                <p>Loading...</p>
+                <div className="py-4 px-6 bg-blue-800 opacity-0">
+                    <div className="h-16">Loading...</div>
+                </div>
+                {Array.from({length: 4}).map((temp, index) => {
+                    return(
+                            <div key={`placeholder-${index}`} className="py-4 px-6 bg-blue-800">
+                                <div className="h-32"></div>
+                            </div>
+                        )
+                })}
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className='bg-red-800 px-4 py-2 font-bold'>
+            <div className='bg-red-800 px-4 py-2 font-bold min-h-[500px]'>
                 <h2>{sectionName}</h2>
-                <p> Error: {error}</p>
+                <div>
+                    <p> Error: {error}</p>
+                </div>
             </div>
         );
     }
@@ -81,7 +99,9 @@ export default function List({sectionName, colSize}) {
         return (
             <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
-                <p>No data available</p>
+                <div>
+                    <p>No data available</p>
+                </div>
             </div>
         );
     }
@@ -90,13 +110,28 @@ export default function List({sectionName, colSize}) {
         <div className='bg-red-800 px-4 py-2 font-bold'>
             <h2>{sectionName}</h2>
             {info.map((item, index) => {
+
+                if (!item) {
+                    return (
+                        <div key={`placeholder-${index}`} className="py-4 px-6 bg-blue-800 min-h-[500px]">
+                            <div className="h-32"></div>
+                        </div>
+                    )
+                }
+
                 if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
                     return <Team key={item.id || index} team={item}/>
                 } else {
                     return <Game key={item.id || index} game={item}/>
                 }
             })}
-            {/*<Pages/>*/}
+            {(sectionName === 'GAMES' || sectionName === 'TEAMS') && (
+                <Pages
+                    currentpage={info.page}
+                    setCurrentPage={setCurrentPage}
+                    totalPages={totalPages}
+                />
+            )}
         </div>
     )
 }
