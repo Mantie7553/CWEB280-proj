@@ -29,7 +29,7 @@ context('Files', () => {
 
     cy.wait('@getComment').its('response.body')
       .should('have.property', 'name')
-      .and('include', 'Using fixtures to represent data')
+      .and('include', 'Using controllers to represent data')
   })
 
   it('cy.fixture() or require - load a fixture', function () {
@@ -63,7 +63,7 @@ context('Files', () => {
     // generate a fixture file for use later
     cy.request('https://jsonplaceholder.cypress.io/users')
       .then((response) => {
-        cy.writeFile('cypress/fixtures/users.json', response.body)
+        cy.writeFile('cypress/controllers/users.json', response.body)
       })
 
     cy.fixture('users').should((users) => {
@@ -72,7 +72,7 @@ context('Files', () => {
 
     // JavaScript arrays and objects are stringified
     // and formatted into text.
-    cy.writeFile('cypress/fixtures/profile.json', {
+    cy.writeFile('cypress/controllers/profile.json', {
       id: 8739,
       name: 'Jane',
       email: 'jane@example.com',

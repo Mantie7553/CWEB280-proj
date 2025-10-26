@@ -70,7 +70,7 @@ export default function List({sectionName}) {
         return (
             <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
-                <div className="py-4 px-6 bg-blue-800 opacity-0">
+                <div className="py-4 px-6 bg-blue-800">
                     <div className="h-16">Loading...</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => {
@@ -88,9 +88,16 @@ export default function List({sectionName}) {
         return (
             <div className='bg-red-800 px-4 py-2 font-bold min-h-[500px]'>
                 <h2>{sectionName}</h2>
-                <div>
-                    <p> Error: {error}</p>
+                <div className="py-4 px-6 bg-blue-800">
+                    <div className="h-16">Error: {error}</div>
                 </div>
+                {Array.from({length: 4}).map((temp, index) => {
+                    return(
+                        <div key={`placeholder-${index}`} className="py-4 px-6 bg-blue-800">
+                            <div className="h-32"></div>
+                        </div>
+                    )
+                })}
             </div>
         );
     }
@@ -99,9 +106,16 @@ export default function List({sectionName}) {
         return (
             <div className='bg-red-800 px-4 py-2 font-bold'>
                 <h2>{sectionName}</h2>
-                <div>
-                    <p>No data available</p>
+                <div className="py-4 px-6 bg-blue-800">
+                    <div className="h-16">No data available</div>
                 </div>
+                {Array.from({length: 4}).map((temp, index) => {
+                    return(
+                        <div key={`placeholder-${index}`} className="py-4 px-6 bg-blue-800">
+                            <div className="h-32"></div>
+                        </div>
+                    )
+                })}
             </div>
         );
     }
