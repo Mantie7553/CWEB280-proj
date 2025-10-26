@@ -7,64 +7,66 @@ export default function Game({game}) {
     const includesStats = homeTeam.winRate !== undefined || awayTeam.winRate !== undefined;
 
     return (
-        <div className="lg:col-span-1 flex items-center py-4 px-6 bg-blue-800">
-            <div id="basics" className="flex items-center py-4 px-6">
+        <div className="game-card">
+            <div id="basics" className="game-basic-info">
                 {awayTeam.logoFName && (
-                    <img src={awayTeam.logoFName} alt={`${awayTeam.name}-logo`}/>
+                    <img src={`/public/uploads/${awayTeam.logoFName}`} alt={`${awayTeam.name}-logo`}
+                    className="game-team-logo"/>
                 )}
-                <div>
-                    <h3>AWAY</h3>
-                    <p>{awayTeam.name}</p>
+                <div className="game-team-info">
+                    <h3 className="game-team-label">AWAY</h3>
+                    <p className="game-team-name">{awayTeam.name}</p>
                 </div>
                 {game.awayScore !== 0 && (
-                    <div>
-                        <h3>SCORE</h3>
-                        <p>{game.awayScore}</p>
+                    <div className="game-score">
+                        <h3 className="game-score-label">SCORE</h3>
+                        <p className="game-score-value">{game.awayScore}</p>
                     </div>
                 )}
-                <div>
-                    <p>{game.gameDate}</p>
-                    <p>AT</p>
+                <div className="game-datetime">
+                    <p className="game-datetime-date">{game.gameDate}</p>
+                    <p className="game-datetime-at">AT</p>
                 </div>
-                <div>
-                    <h3>HOME</h3>
-                    <p>{homeTeam.name}</p>
+                <div className="game-team-info">
+                    <h3 className="game-team-label">HOME</h3>
+                    <p className="game-team-name">{homeTeam.name}</p>
                 </div>
                 {game.homeScore !== 0 && (
-                    <div>
-                        <h3>SCORE</h3>
-                        <p>{game.homeScore}</p>
+                    <div className="game-score">
+                        <h3 className="game-score-label">SCORE</h3>
+                        <p className="game-score-value">{game.homeScore}</p>
                     </div>
                 )}
                 {homeTeam.logoFName && (
-                    <img src={homeTeam.logoFName} alt={`${homeTeam.name}-logo`}/>
+                    <img src={`/public/uploads/${homeTeam.logoFName}`} alt={`${homeTeam.name}-logo`}
+                         className="game-team-logo"/>
                 )}
             </div>
             {includesStats && (
-                <div id="stats" className="flex items-center py-4 px-6 bg-blue-800">
-                    <div>
-                        <h3>WIN RATE</h3>
-                        <p>{homeTeam.winRate}</p>
+                <div id="stats" className="game-stats-info">
+                    <div className="game-stat">
+                        <h3 className="game-stat-label">WIN RATE</h3>
+                        <p className="game-stat-value">{homeTeam.winRate}</p>
                     </div>
-                    <div>
-                        <h3>AVG POINTS</h3>
-                        <p>{homeTeam.avgPoints}</p>
+                    <div className="game-stat">
+                        <h3 className="game-stat-label">AVG POINTS</h3>
+                        <p className="game-stat-value">{homeTeam.avgPoints}</p>
                     </div>
-                    <div>
-                        <h3>AVG DIFF</h3>
-                        <p>{homeTeam.avgDiff}</p>
+                    <div className="game-stat">
+                        <h3 className="game-stat-label">AVG DIFF</h3>
+                        <p className="game-stat-value">{homeTeam.avgDiff}</p>
                     </div>
-                    <div>
-                        <h3>WIN RATE</h3>
-                        <p>{awayTeam.winRate}</p>
+                    <div className="game-stat">
+                        <h3 className="game-stat-label">WIN RATE</h3>
+                        <p className="game-stat-value">{awayTeam.winRate}</p>
                     </div>
-                    <div>
-                        <h3>AVG POINTS</h3>
-                        <p>{awayTeam.avgPoints}</p>
+                    <div className="game-stat">
+                        <h3 className="game-stat-label">AVG POINTS</h3>
+                        <p className="game-stat-value">{awayTeam.avgPoints}</p>
                     </div>
-                    <div>
-                        <h3>AVG DIFF</h3>
-                        <p>{awayTeam.avgDiff}</p>
+                    <div className="game-stat">
+                        <h3 className="game-stat-label">AVG DIFF</h3>
+                        <p className="game-stat-value">{awayTeam.avgDiff}</p>
                     </div>
                 </div>
             )}

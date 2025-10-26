@@ -2,29 +2,32 @@
 
 export default function Team({team}) {
     return (
-        <div className="flex items-center py-4 px-6 bg-blue-800">
+        <div className="team-card">
             {team.logoFName && (
-                <img src={team.logoFName} alt={`${team.name}-logo`}/>
+                <img src={`/public/uploads/${team.logoFName}`} alt={`${team.name}-logo`}
+                className="team-logo"/>
             )}
-            <h3>{team.name}</h3>
+            <h3 className="team-name">{team.name}</h3>
+            <div className="team-stats">
             {team.avgPoints !== undefined && (
-                <div>
-                    <p>AVG POINTS</p>
-                    <p>{team.avgPoints}</p>
+                <div className="team-stat">
+                    <p className="team-stat-label">AVG POINTS</p>
+                    <p className="team-stat-value">{team.avgPoints}</p>
                 </div>
             )}
             {team.avgDiff !== undefined && (
-                <div>
-                    <p>AVG DIFF</p>
-                    <p>{team.avgDiff}</p>
+                <div className="team-stat">
+                    <p className="team-stat-label">AVG DIFF</p>
+                    <p className="team-stat-value">{team.avgDiff}</p>
                 </div>
             )}
             {team.winRate !== undefined && (
-                <div>
-                    <p>WIN RATE</p>
-                    <p>{(team.winRate * 100).toFixed(1)}%</p>
+                <div className="team-stat">
+                    <p className="team-stat-label">WIN RATE</p>
+                    <p className="team-stat-value">{(team.winRate * 100).toFixed(1)}%</p>
                 </div>
             )}
+            </div>
         </div>
     )
 }

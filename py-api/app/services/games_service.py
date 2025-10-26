@@ -14,8 +14,8 @@ engine = create_engine(config.DB_PATH, echo=True, future=True)
 
 class GameData(BaseModel):
     dateTime: str
-    homeTeam: str
-    awayTeam: str
+    homeTeam: int
+    awayTeam: int
     homeScore: int
     awayScore: int
 
@@ -172,11 +172,11 @@ def paged_games_with_stats(page: int):
 def add_game(data: GameData):
     with Session(engine) as session:
         homeTeam = session.query(Team)\
-        .filter(data.homeTeam == Team.name)\
+        .filter(data.homeTeam == Team.id)\
         .first()
 
         awayTeam = session.query(Team)\
-            .filter(data.awayTeam == Team.name)\
+            .filter(data.awayTeam == Team.id)\
             .first()
         if homeTeam is None or awayTeam is None:
             return {"error": "Home or away team not found"}

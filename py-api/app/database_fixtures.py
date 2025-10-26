@@ -56,7 +56,7 @@ def gen_teams(session: Session):
     ))
 
     teamsToUse.append( Team(
-        logoFName="hawks.png",
+        logoFName="atlanta-hawks.png",
         name="Atlanta Hawks"
     ))
 

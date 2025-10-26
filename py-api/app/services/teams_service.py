@@ -9,16 +9,27 @@ from app.schemas.database_schema import Team, Game
 
 engine = create_engine(config.DB_PATH, echo=True, future=True)
 
+
 def query_teams(teamName: str | None = None):
     with Session(engine) as session:
         query: Query = session.query(
             Team.id,
             Team.name,
             Team.logoFName
-        )
+        ).order_by(Team.name.asc())
         if teamName:
             query = query.filter(Team.name.like(f"%{teamName}%"))
-        return query.all()
+
+        # Convert Row objects to dictionaries
+        results = query.all()
+        return [
+            {
+                "id": row.id,
+                "name": row.name,
+                "logoFName": row.logoFName
+            }
+            for row in results
+        ]
 
 
 class TeamData(BaseModel):
@@ -28,7 +39,7 @@ class TeamData(BaseModel):
 # adds a new team entry in the database if they do not already exist
 def add_team(data: TeamData):
     with Session(engine) as session:
-        if query_teams(data.teamName):
+        if not query_teams(data.teamName):
             team = Team(
                 name=data.teamName,
                 logoFName=data.teamLogoFName
@@ -167,15 +178,15 @@ def top_teams():
     allTeams = query_teams()
     teamStats = []
     for team in allTeams:
-        winRate = team_win_loss(team.name)
+        winRate = team_win_loss(team["name"])
 
         if winRate == 0:
             continue
 
         teamStats.append({
-            "id": team.id,
-            "name": team.name,
-            "logoFName": team.logoFName,
+            "id": team["id"],
+            "name": team["name"],
+            "logoFName": team["logoFName"],
             "winRate": winRate
         })
 
@@ -187,14 +198,14 @@ def team_with_stats():
     allTeams = query_teams()
     teamStats = []
     for team in allTeams:
-        winRate = team_win_loss(team.name)
-        avgPoints = team_point_avg(team.name)
-        avgDiff = team_diff_avg(team.name)
-        lastScore = last_score(team.name)
+        winRate = team_win_loss(team["name"])
+        avgPoints = team_point_avg(team["name"])
+        avgDiff = team_diff_avg(team["name"])
+        lastScore = last_score(team["name"])
         teamStats.append({
-            "id": team.id,
-            "name": team.name,
-            "logoFName": team.logoFName,
+            "id": team["id"],
+            "name": team["name"],
+            "logoFName": team["logoFName"],
             "winRate": winRate,
             "avgPoints": avgPoints,
             "avgDiff": avgDiff,
@@ -221,20 +232,30 @@ def team_with_stats_paged(page: int):
     allTeams = query_teams()
     teamStats = []
     for team in allTeams:
-        winRate = team_win_loss(team.name)
-        avgPoints = team_point_avg(team.name)
-        avgDiff = team_diff_avg(team.name)
-        lastScore = last_score(team.name)
+        winRate = team_win_loss(team["name"])
+        avgPoints = team_point_avg(team["name"])
+        avgDiff = team_diff_avg(team["name"])
+        lastScore = last_score(team["name"])
         teamStats.append({
-            "id": team.id,
-            "name": team.name,
-            "logoFName": team.logoFName,
+            "id": team["id"],
+            "name": team["name"],
+            "logoFName": team["logoFName"],
             "winRate": winRate,
             "avgPoints": avgPoints,
             "avgDiff": avgDiff,
             "lastScore": lastScore,
         })
         teamStats.sort(key=lambda t: t["name"])
-    return {"teams": teamStats[offset : offset + 5]}
 
+        page_teams = teamStats[offset:offset + 5]
+
+        while len(page_teams) < 5:
+            page_teams.append(None)
+
+    return {
+        "teams": teamStats[offset:offset + 5],
+        "totalTeams": totalTeams,
+        "pageCount": pageCount,
+        "page": page
+    }
 

@@ -1,29 +1,55 @@
-import {useState} from "react";
+import {useState, useEffect, use} from "react";
 import TeamAdd from "../components/TeamAdd.jsx";
 
 export default function DataEntry() {
     const [showModal, setShowModal] = useState(false);
     const [dateTime, setDateTime] = useState('');
-    const [homeTeam, setHomeTeam] = useState('Default Team');
+    const [homeTeam, setHomeTeam] = useState('');
+    const [homeTeamId, setHomeTeamId] = useState(null);
     const [homeScore, setHomeScore] = useState(0);
-    const [awayTeam, setAwayTeam] = useState('Default Team');
+    const [awayTeam, setAwayTeam] = useState('');
+    const [awayTeamId, setAwayTeamId] = useState(null);
     const [awayScore, setAwayScore] = useState(0);
-    // will be replaced with actual teams from the database
-    const teamArray = ["Default","Toronto Raptors", "Indiana Pacers", "Golden State Warriors"];
+    const [teamArray, setTeamArray] = useState([]);
+    // Fetch teams from API
+    useEffect(() => {
+        fetchTeams();
+    }, []);
+
+    const fetchTeams = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team`);
+            const data = await response.json();
+
+            if (data && Array.isArray(data)) {
+                setTeamArray(data);
+            }
+        } catch (error) {
+            console.error('Error fetching teams:', error);
+        }
+    };
+
+    const handleTeamAdded = (newTeam) => {
+        fetchTeams();
+    };
 
     const sections = [
         {
             title:"Home Team",
-            team: homeTeam,
-            setTeam: setHomeTeam,
+            teamId: homeTeamId,
+            setTeamId: setHomeTeamId,
+            teamName: homeTeam,
+            setTeamName: setHomeTeam,
             score: homeScore,
             setScore: setHomeScore,
             teams:teamArray
         },
         {
             title:"Away Team",
-            team: awayTeam,
-            setTeam: setAwayTeam,
+            teamId: awayTeamId,
+            setTeamId: setAwayTeamId,
+            teamName: awayTeam,
+            setTeamName: setAwayTeam,
             score: awayScore,
             setScore: setAwayScore,
             teams:teamArray
@@ -40,17 +66,33 @@ export default function DataEntry() {
 
     // Handles the sending of data to the API to be saved into the database
     const handleSave = () => {
+        if (!dateTime) {
+            alert('Please select a date and time');
+            return;
+        }
+        if (!homeTeamId) {
+            alert('Please select a home team');
+            return;
+        }
+        if (!awayTeamId) {
+            alert('Please select an away team');
+            return;
+        }
+
+        const gameData = {
+            dateTime,
+            homeTeam: homeTeamId,
+            homeScore: homeScore || 0,
+            awayTeam: awayTeamId,
+            awayScore: awayScore || 0
+        };
+
+        console.log('Sending game data:', gameData);
 
         fetch(`${import.meta.env.VITE_API_BASE_URL}/game/add`, {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                dateTime,
-                homeTeam,
-                homeScore,
-                awayTeam,
-                awayScore
-            })
+            body: JSON.stringify(gameData)
         })
             .then(resp => {
                 if (!resp.ok) {
@@ -103,15 +145,25 @@ export default function DataEntry() {
                                         Name
                                     </label>
                                     <select
-                                        value={section.team}
-                                        onChange={(e) => section.setTeam(e.target.value)}
+                                        value={section.teamId || ''}
+                                        onChange={(e) => {
+                                            const selectedId = parseInt(e.target.value);
+                                            const selectedTeam = section.teams.find(t => t.id === selectedId);
+                                            section.setTeamId(selectedId);
+                                            section.setTeamName(selectedTeam?.name || '');
+                                        }}
                                         required
                                     >
-                                        {section.teams.map(teamOption => {
-                                            return (
-                                                    <option key={teamOption}>{teamOption}</option>
-                                                )
-                                        })}
+                                        <option value="">Select a team</option>
+                                        {section.teams && section.teams.length > 0 ? (
+                                            section.teams.map(team => (
+                                                <option key={team.id} value={team.id}>
+                                                    {team.name}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option disabled>Loading teams...</option>
+                                        )}
                                     </select>
                                     <button type="button" onClick={() => setShowModal(true)}>
                                         Don't see the team you need? Add one
@@ -146,7 +198,8 @@ export default function DataEntry() {
 
             <TeamAdd
                 isOpen={showModal}
-                onClose={() => {setShowModal(false)}}
+                onClose={() => setShowModal(false)}
+                onSuccess={handleTeamAdded}
             />
         </div>
     )
