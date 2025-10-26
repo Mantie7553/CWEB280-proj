@@ -1,8 +1,6 @@
 import {useState} from "react";
 
-export default function Navbar({showLogin, setShowLogin}) {
-
-    const [account, setAccount] = useState({});
+export default function Navbar({showLogin, setShowLogin, showDataEntry}) {
 
     const handleLogin = () => {
         setShowLogin(true);
@@ -15,8 +13,9 @@ export default function Navbar({showLogin, setShowLogin}) {
             <nav className="flex justify-between">
                 <a href="/" className="bg-[#ff0000] text-white">HOME</a>
                 <a href="/stats" className="bg-[#ff0000] text-white">STATS</a>
-                {/*This data entry page should still take up space but be invisible and not clickable */}
-                <a href="/data-entry" className="bg-[#ff0000] text-white">DATA ENTRY</a>
+                {showDataEntry && (
+                    <a href="/data-entry" className="bg-[#ff0000] text-white">DATA ENTRY</a>
+                )}
                 <button type="button" onClick={handleLogin} className="bg-[#ff0000] text-white">LOGIN</button>
             </nav>
             <div id="login-container"></div>

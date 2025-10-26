@@ -8,14 +8,17 @@ import Navbar from "./components/Navbar.jsx";
 
 export default function App() {
     const [showLogin, setShowLogin] = useState(false);
+    const [showDataEntry, setShowDataEntry] = useState(false);
 
     const handleLoggedIn = () => {
+        setShowDataEntry(true);
         console.log('Once logged in make data entry visible. Switch to account functionality');
     }
 
     return (
     <BrowserRouter>
-        <Navbar showLogin={showLogin} setShowLogin={setShowLogin}/>
+        <Navbar showLogin={showLogin} setShowLogin={setShowLogin}
+                showDataEntry={showDataEntry} setShowDataEntry={setShowDataEntry}/>
         <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/stats" element={<Stats/>} />

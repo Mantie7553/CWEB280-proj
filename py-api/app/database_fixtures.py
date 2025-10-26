@@ -50,6 +50,16 @@ def gen_teams(session: Session):
         name="Chicago Bulls"
     ))
 
+    teamsToUse.append( Team(
+        logoFName="timberwolves.png",
+        name="Minnesota Timberwolves"
+    ))
+
+    teamsToUse.append( Team(
+        logoFName="hawks.png",
+        name="Atlanta Hawks"
+    ))
+
     session.add_all(teamsToUse)
     session.commit()
 
@@ -249,7 +259,7 @@ def gen_games(session: Session):
     ))
 
     gamesToUse.append(Game(
-        gameDate=date(2025, 10, 20),
+        gameDate=date(2025, 11, 20),
         homeTeam=3,  # Pacers
         awayTeam=2,  # Warriors
         homeScore=111,
