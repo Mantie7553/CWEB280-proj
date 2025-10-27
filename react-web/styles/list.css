@@ -1,3 +1,7 @@
+/*
+    list component styling
+    Authors: Mantie7553, Kinley6573
+*/
 .list-section-game {
     @apply bg-[#C9082A] p-4 mb-6 border-b-2 border-white;
 }

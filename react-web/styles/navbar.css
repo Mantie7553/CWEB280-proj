@@ -1,3 +1,7 @@
+/*
+    navbar component styling
+    Authors: Mantie7553, Kinley6573
+*/
 .navbar {
     @apply bg-[#17408B] px-8 py-4 border-b-4 border-[#C9082A];
 }

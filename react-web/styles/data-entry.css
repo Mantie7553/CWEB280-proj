@@ -1,3 +1,7 @@
+/*
+    data entry page styling
+    Authors: Mantie7553, Kinley6573
+*/
 .data-entry-container {
     @apply p-20 max-w-4xl mx-auto rounded-2xl bg-white;
 }

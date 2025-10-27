@@ -1,6 +1,12 @@
-import {useState, useEffect, use} from "react";
+import {useState, useEffect} from "react";
 import TeamAdd from "../components/TeamAdd.jsx";
 
+/**
+ * Creates the Data Entry page, used to enter new data into the database
+ * @returns {JSX.Element} The page for entering new data
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function DataEntry() {
     const [showModal, setShowModal] = useState(false);
     const [dateTime, setDateTime] = useState('');
@@ -11,11 +17,20 @@ export default function DataEntry() {
     const [awayTeamId, setAwayTeamId] = useState(null);
     const [awayScore, setAwayScore] = useState(0);
     const [teamArray, setTeamArray] = useState([]);
-    // Fetch teams from API
+
+    /**
+     * calls the fetch Teams functions when the page is loaded
+     */
     useEffect(() => {
         fetchTeams();
     }, []);
 
+    /**
+     * Fetches teams from the database to be used
+     * in the teams select list to limit user error when entering a team
+     *  sets the team array to the response from the fetch
+     * @returns {Promise<void>}
+     */
     const fetchTeams = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team`);
@@ -29,10 +44,21 @@ export default function DataEntry() {
         }
     };
 
-    const handleTeamAdded = (newTeam) => {
+    /**
+     * When a new team is added, updates the list of teams in the select
+     */
+    const handleTeamAdded = () => {
         fetchTeams();
     };
 
+    /**
+     * The two sections of data to be entered (home and away)
+     * @type {[{teamName: string, setTeamId: (value: unknown) => void, setTeamName:
+     * (value: (((prevState: string) => string) | string)) => void, score: number, teams: *[], teamId: unknown,
+     * title: string, setScore: (value: (((prevState: number) => number) | number)) => void},{teamName: string,
+     * setTeamId: (value: unknown) => void, setTeamName: (value: (((prevState: string) => string) | string)) => void,
+     * score: number, teams: *[], teamId: unknown, title: string, setScore: (value: (((prevState: number) => number) | number)) => void}]}
+     */
     const sections = [
         {
             title:"Home Team",
@@ -56,6 +82,9 @@ export default function DataEntry() {
         }
     ];
 
+    /**
+     * Sets all values back to their defaults
+     */
     const handleClear = () => {
         setDateTime('');
         setHomeTeam('Default Team');
@@ -64,7 +93,10 @@ export default function DataEntry() {
         setAwayScore(0);
     };
 
-    // Handles the sending of data to the API to be saved into the database
+    /**
+     * Alerts a user when data has not been entered
+     *  else posts the new data to the database
+     */
     const handleSave = () => {
         if (!dateTime) {
             alert('Please select a date and time');
@@ -130,7 +162,7 @@ export default function DataEntry() {
                     required
                 />
             </div>
-
+                {/* map here to cut down on the amount of duplicate code */}
             {sections.map((section, index) => {
                 return (
                         <div key={index} className="data-entry-section">
@@ -196,7 +228,7 @@ export default function DataEntry() {
                     CLEAR
                 </button>
             </div>
-
+            {/* modal for adding a team */}
             <TeamAdd
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}

@@ -1,3 +1,7 @@
+/*
+    pagination component styling
+    Authors: Mantie7553, Kinley6573
+*/
 .pagination {
     @apply flex justify-center items-center gap-2 mt-4 p-4;
 }
