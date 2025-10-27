@@ -11,47 +11,38 @@ from app.schemas.database_schema import Team, Game
 def gen_teams(session: Session):
     teamsToUse = []
     teamsToUse.append( Team(
-        logoFName = "raptors.png",
         name = "Toronto Raptors"
     ))
 
     teamsToUse.append( Team(
-        logoFName = "warriors.png",
         name = "Golden State Warriors"
     ))
 
     teamsToUse.append( Team(
-        logoFName = "pacers.png",
         name = "Indiana Pacers"
     ))
 
     teamsToUse.append( Team(
-        logoFName = "thunder.png",
         name = "Oklahoma City Thunder"
     ))
 
     teamsToUse.append( Team(
-        logoFName="lakers.png",
         name="Los Angeles Lakers"
     ))
 
     teamsToUse.append( Team(
-        logoFName="celtics.png",
         name="Boston Celtics"
     ))
 
     teamsToUse.append( Team(
-        logoFName="heat.png",
         name="Miami Heat"
     ))
 
     teamsToUse.append( Team(
-        logoFName="bulls.png",
         name="Chicago Bulls"
     ))
 
     teamsToUse.append( Team(
-        logoFName="timberwolves.png",
         name="Minnesota Timberwolves"
     ))
 

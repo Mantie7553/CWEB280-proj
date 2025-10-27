@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState} from "react";
+import { useLocation } from "react-router-dom";
 
 /**
  * Navbar component used to navigate between pages
@@ -16,6 +17,24 @@ import { useEffect, useRef, useState} from "react";
 export default function Navbar({ setShowLogin, showDataEntry, currentAccount, onLogout}) {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
+    const location = useLocation();
+
+    /**
+     * Function called to return the title of the currently displayed page for use in the navbar
+     * @returns {string}
+     */
+    const getPageTitle = () => {
+        switch(location.pathname) {
+            case '/':
+                return 'HOME';
+            case '/stats':
+                return 'STATS';
+            case '/data-entry':
+                return 'DATA ENTRY';
+            default:
+                return '';
+        }
+    };
 
     /**
      * Function called to show the login modal
@@ -56,7 +75,9 @@ export default function Navbar({ setShowLogin, showDataEntry, currentAccount, on
 
     return (
         <div className="navbar">
-            <h1 className="navbar-title">NBA GAME TRACKER</h1>
+            <h1 className="navbar-title">
+                NBA GAME TRACKER{getPageTitle() && ` - ${getPageTitle()}`}
+            </h1>
             <nav className="navbar-links">
                 <a href="/" className="navbar-link">HOME</a>
                 <a href="/stats" className="navbar-link">STATS</a>

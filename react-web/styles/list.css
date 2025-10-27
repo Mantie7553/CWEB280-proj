@@ -17,3 +17,28 @@
 .list-content {
     @apply flex flex-col gap-2;
 }
+
+.list-header-collapsible {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #C9082A;
+    border: 1px solid white;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.list-header-collapsible:hover {
+    background-color: #b91c1c;
+}
+
+.list-header-collapsible .collapse-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+}

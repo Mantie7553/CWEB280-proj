@@ -11,7 +11,7 @@
 }
 
 .modal-close {
-    @apply absolute top-4 right-4 bg-[#C9082A] text-white border-0 w-8 h-8 rounded cursor-pointer font-bold;
+    @apply absolute top-4 right-4 bg-[#C9082A] text-white border-0 w-8 h-8 rounded cursor-pointer font-bold flex items-center justify-center leading-none;
 }
 
 .modal-title {

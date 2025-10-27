@@ -11,10 +11,11 @@
 export default function Team({team}) {
     return (
         <div className="team-card">
-            {team.logoFName && (
-                <img src={`/public/uploads/${team.logoFName}`} alt={`${team.name}-logo`}
-                className="team-logo"/>
-            )}
+            <img
+                src={team.logoFName ? `/public/uploads/${team.logoFName}` : '/NBA-Logo.png'}
+                alt={`${team.name}-logo`}
+                className="team-logo"
+            />
             <h3 className="team-name">{team.name}</h3>
             <div className="team-stats">
             {team.avgPoints !== undefined && (

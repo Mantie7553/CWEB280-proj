@@ -20,3 +20,4 @@ async def send_teams():
 @router.get("/load")
 async def load_teams():
     reset_teams()
+    return {"message": "Reset Successful"}

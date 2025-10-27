@@ -100,9 +100,10 @@ export default function List({sectionName}) {
      */
     if (loading) {
         return (
-            <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
-                <h2 className="list-header">{sectionName}</h2>
-                <div className="loading-container">
+            <div className={'list-section-team'}>
+                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                    <h2 className="list-header">{sectionName}</h2>
+                )}                <div className="loading-container">
                     <div>Loading...</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => (
@@ -119,9 +120,10 @@ export default function List({sectionName}) {
      */
     if (error) {
         return (
-            <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
-                <h2 className="list-header">{sectionName}</h2>
-                <div className="error-container">
+            <div className={'list-section-team'}>
+                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                    <h2 className="list-header">{sectionName}</h2>
+                )}                <div className="error-container">
                     <div>Error: {error}</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => {
@@ -144,9 +146,10 @@ export default function List({sectionName}) {
      */
     if (info.length === 0) {
         return (
-            <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
-                <h2 className="list-header">{sectionName}</h2>
-                <div className="empty-container">
+            <div className={'list-section-team'}>
+                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                    <h2 className="list-header">{sectionName}</h2>
+                )}                <div className="empty-container">
                     <div>No data available</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => {
@@ -169,8 +172,10 @@ export default function List({sectionName}) {
      *  Any empty positions will be filled with placeholder values
      */
     return (
-        <div className={gameOrTeam === 'team' ? 'list-section-team' : 'list-section-game'}>
-            <h2 className="list-header">{sectionName}</h2>
+        <div className={sectionName === 'game' ? 'list-section-game' : 'list-section-team'}>
+            {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                <h2 className="list-header">{sectionName}</h2>
+            )}
             {info.map((item, index) => {
                 if (!item) {
                     if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {

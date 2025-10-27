@@ -20,10 +20,11 @@ export default function Game({game}) {
     return (
         <div className="game-card">
             <div id="basics" className={hasScores ? 'game-basic-info' : 'game-basic-info-no-score'}>
-                {awayTeam.logoFName && (
-                    <img src={`/public/uploads/${awayTeam.logoFName}`} alt={`${awayTeam.name}-logo`}
-                    className="game-team-logo"/>
-                )}
+                <img
+                    src={awayTeam.logoFName ? `/public/uploads/${awayTeam.logoFName}` : '/NBA-Logo.png'}
+                    alt={`${awayTeam.name}-logo`}
+                    className="game-team-logo"
+                />
                 <div className="game-team-info">
                     <h3 className="game-team-label">AWAY</h3>
                     <p className="game-team-name">{awayTeam.name}</p>
@@ -48,10 +49,11 @@ export default function Game({game}) {
                     <h3 className="game-team-label">HOME</h3>
                     <p className="game-team-name">{homeTeam.name}</p>
                 </div>
-                {homeTeam.logoFName && (
-                    <img src={`/public/uploads/${homeTeam.logoFName}`} alt={`${homeTeam.name}-logo`}
-                         className="game-team-logo"/>
-                )}
+                <img
+                    src={homeTeam.logoFName ? `/public/uploads/${homeTeam.logoFName}` : '/NBA-Logo.png'}
+                    alt={`${homeTeam.name}-logo`}
+                    className="game-team-logo"
+                />
             </div>
             {includesStats && (
                 <div id="stats" className="game-stats-info">
