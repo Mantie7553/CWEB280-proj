@@ -5,7 +5,16 @@ import Game from "./Game.jsx";
 import EmptyGame from "./EmptyGame.jsx";
 import EmptyTeam from "./EmptyTeam.jsx";
 
-
+/**
+ * A React component that lists a number of Team or Game objects
+ *  - fetches the data necessary for a given list based off of the sectionName
+ *  - can display loading, error, or empty list with placeholder items
+ *  - pagination for a list is optional (only for TEAMS or GAMES sections)
+ * @param sectionName the title / name of the current section
+ * @returns {JSX.Element}
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function List({sectionName}) {
 
     const[info, setInfo] = useState([]);
@@ -17,6 +26,10 @@ export default function List({sectionName}) {
 
     const gameOrTeam = sectionName === "TOP TEAMS" || sectionName === "TEAMS" ? 'team' : 'game';
 
+    /**
+     * useEffect to fetch the data for a given list
+     * and sets the info array, total page count, current page, and total item count
+     */
     useEffect(() => {
         const fetchList = () => {
 
@@ -82,6 +95,9 @@ export default function List({sectionName}) {
         fetchList()
     }, [sectionName, currentPage]);
 
+    /**
+     * Displays a list while data is being fetched from the database
+     */
     if (loading) {
         return (
             <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
@@ -98,6 +114,9 @@ export default function List({sectionName}) {
         );
     }
 
+    /**
+     *  Displays a list with an error
+     */
     if (error) {
         return (
             <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
@@ -106,16 +125,23 @@ export default function List({sectionName}) {
                     <div>Error: {error}</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => {
-                    return(
-                        <div key={`placeholder-${index}`} className="empty-container">
-                            <div></div>
-                        </div>
-                    )
+                    if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
+                        return (
+                            <EmptyTeam/>
+                        );
+                    } else {
+                        return (
+                            <EmptyGame/>
+                        );
+                    }
                 })}
             </div>
         );
     }
 
+    /**
+     * Displays an empty list with a message that there is nothing to return
+     */
     if (info.length === 0) {
         return (
             <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
@@ -124,16 +150,24 @@ export default function List({sectionName}) {
                     <div>No data available</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => {
-                    return(
-                        <div key={`placeholder-${index}`} className="empty-container">
-                            <div></div>
-                        </div>
-                    )
+                    if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
+                        return (
+                            <EmptyTeam/>
+                        );
+                    } else {
+                        return (
+                            <EmptyGame/>
+                        );
+                    }
                 })}
             </div>
         );
     }
 
+    /**
+     * Standard return when there is data to display
+     *  Any empty positions will be filled with placeholder values
+     */
     return (
         <div className={gameOrTeam === 'team' ? 'list-section-team' : 'list-section-game'}>
             <h2 className="list-header">{sectionName}</h2>

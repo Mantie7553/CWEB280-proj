@@ -1,4 +1,9 @@
-
+/**
+ * A React component used as a placeholder in any case where there is no actual game data to show
+ * @returns {JSX.Element} displaying an empty game object
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function EmptyGame() {
     return (
         <div className="game-card opacity-30">

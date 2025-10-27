@@ -1,5 +1,15 @@
 import {useState} from "react";
 
+/**
+ * A modal used in the Data Entry page for adding new teams to the database
+ *  - handles the file uploads for team logos
+ * @param isOpen boolean for checking if the modal is open or not
+ * @param onClose function that handles closing the modal
+ * @param onSuccess function for handling when data is successfully submitted
+ * @returns {JSX.Element|null} returns a modal used for entering a new team into the database
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function TeamAdd({isOpen, onClose, onSuccess}) {
     const [teamName, setTeamName] = useState('');
     const [logoFile, setLogoFile] = useState(null);
@@ -8,6 +18,12 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
 
     if (!isOpen) return null;
 
+    /**
+     * File upload handler
+     *  - confirms files are the proper type (image) and size (5MB)
+     *  - shows the preview of the image being uploaded
+     * @param e
+     */
     const handleFileChange = (e) => {
         const file = e.target.files[0];
 
@@ -30,6 +46,11 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
         }
     };
 
+    /**
+     * Handles closing the modal
+     *  - resets all fields in the modal and removes the previewed file if it exists
+     *  - calls the onClose function from DataEntry.jsx
+     */
     const handleClose = () => {
         setTeamName('');
         setLogoFile(null);
@@ -40,6 +61,11 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
         onClose();
     };
 
+    /**
+     * Handles the submission of a new team
+     * @param e
+     * @returns {Promise<void>}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 

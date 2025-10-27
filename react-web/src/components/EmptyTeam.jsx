@@ -1,5 +1,9 @@
-
-
+/**
+ * A React component used as a placeholder in any case where there is no actual team data to show
+ * @returns {JSX.Element} displaying an empty team object
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function EmptyTeam() {
     return (
         <div className="team-card opacity-30">

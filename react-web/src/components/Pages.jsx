@@ -1,16 +1,37 @@
+/**
+ * Pagination for lists, created as its own component to make
+ *  using it optionally cleaner
+ * @param currentPage the current page number
+ * @param setCurrentPage function to set the current page number
+ * @param totalPages the number of total pages
+ * @returns {JSX.Element} a pagination option used in some lists
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function Pages({currentPage, setCurrentPage, totalPages}) {
+
+    /**
+     * Handles moving the pages back by 1 unless it is already at the first page
+     */
     const handlePrev = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
     }
 
+    /**
+     * Handles moving the pages forward by 1 unless it is already at the last page
+     */
     const handleNext = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
         }
     }
 
+    /**
+     * Handles moving the page to the selected page
+     * @param pageNum the page number of the button that was clicked
+     */
     const handlePageClick = (pageNum) => {
         setCurrentPage(pageNum);
     }

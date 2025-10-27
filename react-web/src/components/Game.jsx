@@ -1,4 +1,14 @@
-
+/**
+ * A React component that shows information related to a given game
+ *  - displays both teams logos if present
+ *  - displays both teams score if they are greater than 0
+ *  - displays the date for a game
+ *  - optionally lists the following stats for both teams: win rate, average points, and average point differential
+ * @param game an object containing attributes related to an NBA game
+ * @returns {JSX.Element} displaying information for a given NBA game
+ * @constructor
+ * @authors Mantie7553, Kinley6573
+ */
 export default function Game({game}) {
 
     const awayTeam = game.awayTeam;
