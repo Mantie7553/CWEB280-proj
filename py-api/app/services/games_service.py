@@ -11,7 +11,7 @@ from app.services.teams_service import team_win_loss, team_point_avg, team_diff_
 
 engine = create_engine(config.DB_PATH, echo=True, future=True)
 
-
+# pydantic model
 class GameData(BaseModel):
     dateTime: str
     homeTeam: int
@@ -19,11 +19,12 @@ class GameData(BaseModel):
     homeScore: int
     awayScore: int
 
-
+# get all the games in the database
 def query_games():
     with Session(engine) as session:
         return session.query(Game).all()
 
+# get a paged list of games from the database, with an optional filter for upcoming or recent games
 def paged_games(page: int = 1, filter_type: str = None):
     with Session(engine) as session:
         offset = (page -1) * 5
@@ -90,7 +91,7 @@ def paged_games(page: int = 1, filter_type: str = None):
             "page": page
         }
 
-
+# return a paged list of games with all associated stats for each team
 def paged_games_with_stats(page: int):
     with Session(engine) as session:
         offset = (page - 1) * 5
@@ -170,7 +171,7 @@ def paged_games_with_stats(page: int):
             "page": page
         }
 
-
+# submit a new game to the database
 def add_game(data: GameData):
     with Session(engine) as session:
         homeTeam = session.query(Team)\

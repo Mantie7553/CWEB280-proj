@@ -9,7 +9,7 @@ from app.schemas.database_schema import Team, Game
 
 engine = create_engine(config.DB_PATH, echo=True, future=True)
 
-
+# query the teams table to get basic team information, can compare to a passed in team
 def query_teams(teamName: str | None = None):
     with Session(engine) as session:
         query: Query = session.query(
@@ -20,7 +20,7 @@ def query_teams(teamName: str | None = None):
         if teamName:
             query = query.filter(Team.name.like(f"%{teamName}%"))
 
-        # Convert Row objects to dictionaries
+        # convert to dictionary
         results = query.all()
         return [
             {
@@ -31,7 +31,7 @@ def query_teams(teamName: str | None = None):
             for row in results
         ]
 
-
+# pydantic model
 class TeamData(BaseModel):
     teamName: str
     teamLogoFName: str
@@ -216,6 +216,7 @@ def team_with_stats():
         teamStats.sort(key=lambda t: t["name"])
     return {"teams": teamStats}
 
+# creates a list of all teams with their respective stats and allows for pagination
 def team_with_stats_paged(page: int):
     with Session(engine) as session:
         offset = (page - 1) * 5

@@ -6,6 +6,7 @@ from app.database_fixtures import gen_teams, clear_db, gen_games
 
 engine = create_engine(config.DB_PATH, echo=True, future=True)
 
+# used to reset the database to the dummy data
 def reset_teams():
     with Session(engine) as session:
         clear_db(session)

@@ -9,12 +9,14 @@ import app.config
 
 Base = declarative_base()
 
+# The constructor for the Team table in the database
 class Team(Base):
     __tablename__ = "Team"
     id = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
     logoFName = Column(sa.String(255), nullable=True)
     name = Column(sa.String(100), nullable=False)
 
+# The constructor for the Game table in the database
 class Game(Base):
     __tablename__ = "Game"
     id = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)

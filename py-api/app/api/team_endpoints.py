@@ -58,7 +58,7 @@ async def post_team(
             (UPLOAD_DIR / logo_filename).unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail=str(e))
 
-# TESTING PURPOSES -- to see what is in the database and how it is returned
+# Used to get a list of all teams currenty in the database
 @router.get("")
 async def get_teams():
     return query_teams()
