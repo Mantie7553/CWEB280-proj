@@ -1,0 +1,15 @@
+.list-section-game {
+    @apply bg-[#C9082A] p-4 mb-6 border-b-2 border-white;
+}
+
+.list-section-team {
+    @apply bg-[#C9082A] p-4 mb-6;
+}
+
+.list-header {
+    @apply text-white text-xl font-bold mb-4 px-2;
+}
+
+.list-content {
+    @apply flex flex-col gap-2;
+}

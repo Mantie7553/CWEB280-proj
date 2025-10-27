@@ -1,0 +1,30 @@
+.navbar {
+    @apply bg-[#17408B] px-8 py-4 border-b-4 border-[#C9082A];
+}
+
+.navbar-title {
+    @apply text-white text-2xl font-bold mb-4;
+}
+
+.navbar-links {
+    @apply flex justify-between items-center gap-4;
+}
+
+.navbar-link,
+.navbar-button {
+    @apply bg-[#C9082A] text-white px-6 py-3 no-underline font-bold
+    border-0 cursor-pointer rounded-none transition-colors hover:bg-red-700;
+}
+
+.navbar-account-section {
+    @apply relative flex items-center gap-2;
+}
+
+.navbar-dropdown {
+    @apply absolute top-full right-0 mt-2 bg-white border-2 border-[#17408B] rounded shadow-md z-50 min-w-[150px];
+}
+
+.navbar-dropdown-button {
+    @apply w-full text-left px-4 py-3 bg-white text-[#17408B] border-0 cursor-pointer
+    font-medium transition-colors hover:bg-blue-50;
+}

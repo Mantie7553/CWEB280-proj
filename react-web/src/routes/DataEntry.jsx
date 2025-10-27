@@ -87,7 +87,6 @@ export default function DataEntry() {
             awayScore: awayScore || 0
         };
 
-        console.log('Sending game data:', gameData);
 
         fetch(`${import.meta.env.VITE_API_BASE_URL}/game/add`, {
             method: 'POST',
@@ -117,35 +116,35 @@ export default function DataEntry() {
     }
 
     return (
-        <div className="p-8">
+        <div className="data-entry-container">
 
-            <div className="flex items-center justify-between gap-8 mb-8">
-                <label className="text-2xl font-bold whitespace-nowrap">
-                    Date / Time
+            <div className="data-entry-datetime">
+                <label className="data-entry-label">
+                    Date
                 </label>
                 <input
-                    type="datetime-local"
+                    type="date"
                     value={dateTime}
                     onChange={(e) => setDateTime(e.target.value)}
-                    className="flex-1"
-                    placeholder={"Date / Time"}
+                    className="data-entry-input"
                     required
                 />
             </div>
 
             {sections.map((section, index) => {
                 return (
-                        <div key={index} className="mb-8">
-                            <h2 className="text-2xl font-bold text-center mb-8">
+                        <div key={index} className="data-entry-section">
+                            <h2 className="data-entry-section-title">
                                 {section.title}
                             </h2>
-                            <div className="flex gap-8">
-                                <div className="flex-1">
-                                    <label className="block mb-3">
+                            <div className="data-entry-fields">
+                                <div className="data-entry-field">
+                                    <label className="data-entry-label">
                                         Name
                                     </label>
                                     <select
                                         value={section.teamId || ''}
+                                        className="data-entry-input"
                                         onChange={(e) => {
                                             const selectedId = parseInt(e.target.value);
                                             const selectedTeam = section.teams.find(t => t.id === selectedId);
@@ -165,18 +164,20 @@ export default function DataEntry() {
                                             <option disabled>Loading teams...</option>
                                         )}
                                     </select>
-                                    <button type="button" onClick={() => setShowModal(true)}>
+                                    <button type="button" onClick={() => setShowModal(true)}
+                                    className="btn-link">
                                         Don't see the team you need? Add one
                                     </button>
                                 </div>
 
-                                <div className="flex-1">
-                                    <label className="block mb-3">
+                                <div className="data-entry-field">
+                                    <label className="data-entry-label">
                                         Score
                                     </label>
                                     <input
                                         type="number"
                                         value={section.score}
+                                        className="data-entry-input"
                                         onChange={(e) => section.setScore(parseInt(e.target.value))}
                                         placeholder={"0"}
                                         required
@@ -188,10 +189,10 @@ export default function DataEntry() {
             })}
 
             <div className="flex gap-6 justify-center">
-                <button onClick={handleSave}>
+                <button onClick={handleSave} className="btn-primary">
                     SAVE GAME
                 </button>
-                <button onClick={handleClear}>
+                <button onClick={handleClear} className="btn-secondary">
                     CLEAR
                 </button>
             </div>

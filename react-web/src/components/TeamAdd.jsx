@@ -84,36 +84,35 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
     };
 
     return (
-        <div className="data-entry-container">
-            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-                <h2 className="text-2xl font-bold mb-6">Add New Team</h2>
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h2 className="modal-title">Add New Team</h2>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-6">
-                        <label className="block mb-2 font-semibold">
+                    <div className="form-group">
+                        <label className="form-label">
                             Team Name
                         </label>
                         <input
                             type="text"
                             value={teamName}
                             onChange={(e) => setTeamName(e.target.value)}
-                            className="w-full px-3 py-2 border rounded"
-                            placeholder="Enter team name"
+                            className="form-input"
                             required
                         />
                     </div>
 
-                    <div className="mb-6">
-                        <label className="block mb-2 font-semibold">
+                    <div className="form-group">
+                        <label className="form-label">
                             Team Logo (Optional)
                         </label>
                         <input
                             type="file"
                             accept="image/jpeg,image/png,image/gif,image/svg+xml,image/webp"
                             onChange={handleFileChange}
-                            className="w-full"
+                            className="form-select"
                         />
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="form-label">
                             Max 5MB - JPG, PNG, GIF, SVG, WebP
                         </p>
                     </div>
@@ -121,31 +120,27 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
                     {logoPreview && (
                         <div className="mb-6">
                             <label className="block mb-2 font-semibold">Preview</label>
-                            <div className="border rounded p-4 flex justify-center bg-gray-50">
-                                <img
-                                    src={logoPreview}
-                                    alt="Logo preview"
-                                    className="max-h-32 object-contain"
-                                />
+                            <div>
+                                <img src={logoPreview} alt="Logo preview"/>
                             </div>
                         </div>
                     )}
 
-                    <div className="flex gap-4 justify-end">
-                        <button
-                            type="button"
-                            onClick={handleClose}
-                            className="px-4 py-2 border rounded hover:bg-gray-100"
-                            disabled={isUploading}
-                        >
-                            Cancel
-                        </button>
+                    <div className="form-buttons">
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                            className="btn-primary"
                             disabled={isUploading}
                         >
                             {isUploading ? 'Adding...' : 'Add Team'}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleClose}
+                            className="btn-secondary"
+                            disabled={isUploading}
+                        >
+                            Cancel
                         </button>
                     </div>
                 </form>

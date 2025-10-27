@@ -51,7 +51,8 @@ export default function Navbar({showLogin, setShowLogin, showDataEntry, currentA
                         )}
                     </div>
                 ) : (
-                    <button type="button" onClick={handleLogin} className="bg-[#ff0000] text-white">LOGIN</button>
+                    <button type="button"
+                            onClick={handleLogin} className="navbar-button navbar-link">LOGIN</button>
                 )}
             </nav>
             <div id="login-container"></div>

@@ -1,0 +1,74 @@
+.game-card {
+    @apply bg-[#17408B] px-6 py-4 text-white border-t-10 border-[#C9082A];
+}
+
+.game-basic-info {
+    @apply grid grid-cols-[auto_1fr_1fr_200px_1fr_1fr_auto] items-center gap-3;
+}
+
+.game-basic-info-no-score {
+    @apply grid grid-cols-[auto_1fr_200px_1fr_auto] items-center gap-3;
+}
+
+.game-team {
+    @apply flex items-center gap-3 flex-1;
+}
+
+.game-team-logo {
+    @apply w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden;
+}
+
+.game-team-logo img {
+    @apply w-full h-full object-cover;
+}
+
+.game-team-info-away {
+    @apply text-left;
+}
+
+.game-team-info-home {
+    @apply text-right;
+}
+
+.game-team-label,
+.game-score-label,
+.game-datetime-at,
+.game-stat-label{
+    @apply text-xs opacity-80;
+}
+
+.game-team-name {
+    @apply font-bold text-base;
+}
+
+.game-score {
+    @apply text-center;
+}
+
+.game-score-value {
+    @apply font-bold text-2xl;
+}
+
+.game-datetime {
+    @apply text-center px-6 border-l-2 border-r-2 min-w-[180px];
+}
+
+.game-datetime-date {
+    @apply text-xl font-bold;
+}
+
+.game-stats-info {
+    @apply flex justify-around mt-4 pt-4;
+}
+
+.game-team-stats {
+    @apply flex gap-8;
+}
+
+.game-stat {
+    @apply text-center;
+}
+
+.game-stat-value {
+    @apply font-bold text-base;
+}

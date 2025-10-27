@@ -2,6 +2,8 @@ import Team from "./Team.jsx";
 import Pages from "./Pages.jsx";
 import {useEffect, useState} from "react";
 import Game from "./Game.jsx";
+import EmptyGame from "./EmptyGame.jsx";
+import EmptyTeam from "./EmptyTeam.jsx";
 
 
 export default function List({sectionName}) {
@@ -12,6 +14,8 @@ export default function List({sectionName}) {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+
+    const gameOrTeam = sectionName === "TOP TEAMS" || sectionName === "TEAMS" ? 'team' : 'game';
 
     useEffect(() => {
         const fetchList = () => {
@@ -80,25 +84,23 @@ export default function List({sectionName}) {
 
     if (loading) {
         return (
-            <div className="list-section">
+            <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
                 <h2 className="list-header">{sectionName}</h2>
                 <div className="loading-container">
                     <div>Loading...</div>
                 </div>
-                {Array.from({length: 4}).map((temp, index) => {
-                    return(
-                            <div key={`placeholder-${index}`} className="py-4 px-6 bg-blue-800">
-                                <div></div>
-                            </div>
-                        )
-                })}
+                {Array.from({length: 4}).map((temp, index) => (
+                    sectionName === 'TOP TEAMS' || sectionName === 'TEAMS'
+                    ? <EmptyTeam key={`empty-${index}`}/>
+                    : <EmptyGame key={`empty-${index}`}/>
+                ))}
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="list-section">
+            <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
                 <h2 className="list-header">{sectionName}</h2>
                 <div className="error-container">
                     <div>Error: {error}</div>
@@ -116,7 +118,7 @@ export default function List({sectionName}) {
 
     if (info.length === 0) {
         return (
-            <div className="list-section">
+            <div className={sectionName === 'team' ? 'list-section-team' : 'list-section-game'}>
                 <h2 className="list-header">{sectionName}</h2>
                 <div className="empty-container">
                     <div>No data available</div>
@@ -133,87 +135,17 @@ export default function List({sectionName}) {
     }
 
     return (
-        <div className='list-section'>
+        <div className={gameOrTeam === 'team' ? 'list-section-team' : 'list-section-game'}>
             <h2 className="list-header">{sectionName}</h2>
             {info.map((item, index) => {
-                console.log(`Item ${index}:`, item);
-
                 if (!item) {
                     if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
                         return (
-                            <div key={`placeholder-${index}`} className="team-card" style={{opacity: 0.3}}>
-                                <div className="team-logo"></div>
-                                <div className="team-name">---</div>
-                                <div className="team-stats">
-                                    <div className="team-stat">
-                                        <div className="team-stat-label">AVG POINTS</div>
-                                        <div className="team-stat-value">---</div>
-                                    </div>
-                                    <div className="team-stat">
-                                        <div className="team-stat-label">AVG DIFF</div>
-                                        <div className="team-stat-value">---</div>
-                                    </div>
-                                    <div className="team-stat">
-                                        <div className="team-stat-label">WIN RATE</div>
-                                        <div className="team-stat-value">---</div>
-                                    </div>
-                                </div>
-                            </div>
+                            <EmptyTeam/>
                         );
                     } else {
                         return (
-                            <div key={`placeholder-${index}`} className="game-card" style={{opacity: 0.3}}>
-                                <div className="game-basic-info">
-                                    <div className="game-team-logo"></div>
-                                    <div className="game-team-info">
-                                        <h3 className="game-team-label">AWAY</h3>
-                                        <p className="game-team-name">---</p>
-                                    </div>
-                                    <div className="game-score">
-                                        <h3 className="game-score-label">SCORE</h3>
-                                        <p className="game-score-value">---</p>
-                                    </div>
-                                    <div className="game-datetime">
-                                        <p className="game-datetime-date">----</p>
-                                        <p className="game-datetime-at">AT</p>
-                                    </div>
-                                    <div className="game-team-info">
-                                        <h3 className="game-team-label">HOME</h3>
-                                        <p className="game-team-name">---</p>
-                                    </div>
-                                    <div className="game-score">
-                                        <h3 className="game-score-label">SCORE</h3>
-                                        <p className="game-score-value">---</p>
-                                    </div>
-                                    <div className="game-team-logo"></div>
-                                </div>
-                                <div className="game-stats-info">
-                                    <div className="game-stat">
-                                        <h3 className="game-stat-label">WIN RATE</h3>
-                                        <p className="game-stat-value">---</p>
-                                    </div>
-                                    <div className="game-stat">
-                                        <h3 className="game-stat-label">AVG POINTS</h3>
-                                        <p className="game-stat-value">---</p>
-                                    </div>
-                                    <div className="game-stat">
-                                        <h3 className="game-stat-label">AVG DIFF</h3>
-                                        <p className="game-stat-value">---</p>
-                                    </div>
-                                    <div className="game-stat">
-                                        <h3 className="game-stat-label">WIN RATE</h3>
-                                        <p className="game-stat-value">---</p>
-                                    </div>
-                                    <div className="game-stat">
-                                        <h3 className="game-stat-label">AVG POINTS</h3>
-                                        <p className="game-stat-value">---</p>
-                                    </div>
-                                    <div className="game-stat">
-                                        <h3 className="game-stat-label">AVG DIFF</h3>
-                                        <p className="game-stat-value">---</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <EmptyGame/>
                         );
                     }
                 }

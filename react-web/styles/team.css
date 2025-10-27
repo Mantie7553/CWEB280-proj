@@ -1,0 +1,32 @@
+.team-card {
+    @apply grid grid-cols-[0.5fr_1fr_2fr]
+        items-center gap-4 bg-[#17408B] px-6 py-4 text-white border-t-10 border-[#C9082A];
+}
+
+.team-logo {
+    @apply w-15 h-15 rounded-full bg-white flex items-center justify-center overflow-hidden;
+}
+
+.team-logo img {
+    @apply w-full h-full object-cover;
+}
+
+.team-name {
+    @apply font-bold text-lg flex-1;
+}
+
+.team-stats {
+    @apply grid grid-cols-[1fr_1fr_1fr] gap-8;
+}
+
+.team-stat {
+    @apply text-center;
+}
+
+.team-stat-label {
+    @apply opacity-90;
+}
+
+.team-stat-value {
+    @apply font-bold text-lg;
+}

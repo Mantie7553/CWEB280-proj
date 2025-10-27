@@ -126,22 +126,24 @@ def paged_games_with_stats(page: int):
 
         formattedGames = []
         for game in games:
-            homeWinRate = team_win_loss(homeTeam.name)
-            homeAvgPoints = team_point_avg(homeTeam.name)
-            homeAvgDiff = team_diff_avg(homeTeam.name)
-            homeLastScore = last_score(homeTeam.name)
+            homeName = game[1]
+            awayName = game[3]
+            homeWinRate = team_win_loss(homeName)
+            homeAvgPoints = team_point_avg(homeName)
+            homeAvgDiff = team_diff_avg(homeName)
+            homeLastScore = last_score(homeName)
 
-            awayWinRate = team_win_loss(awayTeam.name)
-            awayAvgPoints = team_point_avg(awayTeam.name)
-            awayAvgDiff = team_diff_avg(awayTeam.name)
-            awayLastScore = last_score(awayTeam.name)
+            awayWinRate = team_win_loss(awayName)
+            awayAvgPoints = team_point_avg(awayName)
+            awayAvgDiff = team_diff_avg(awayName)
+            awayLastScore = last_score(awayName)
 
             formattedGames.append({
                 "id": game[0].id,
                 "gameDate": game[0].gameDate.isoformat(),
                 "homeTeam": {
                     "id": game[0].homeTeam,
-                    "name": game[1],
+                    "name": homeName,
                     "logoFName": game[2],
                     "winRate": homeWinRate,
                     "avgPoints": homeAvgPoints,
@@ -150,7 +152,7 @@ def paged_games_with_stats(page: int):
                 },
                 "awayTeam": {
                     "id": game[0].awayTeam,
-                    "name": game[3],
+                    "name": awayName,
                     "logoFName": game[4],
                     "winRate": awayWinRate,
                     "avgPoints": awayAvgPoints,

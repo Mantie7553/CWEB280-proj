@@ -1,0 +1,35 @@
+.data-entry-container {
+    @apply p-20 max-w-4xl mx-auto rounded-2xl bg-white;
+}
+
+.data-entry-datetime {
+    @apply text-black flex items-center gap-8 mb-12 font-bold;
+}
+
+.data-entry-label {
+    @apply font-bold text-xl whitespace-nowrap pr-4;
+}
+
+.data-entry-input {
+    @apply flex-1 px-3 py-3 border-2 border-black rounded text-base font-bold;
+}
+
+.data-entry-section {
+    @apply text-black mb-12;
+}
+
+.data-entry-section-title {
+    @apply font-bold text-2xl text-center mb-6;
+}
+
+.data-entry-fields {
+    @apply flex gap-8;
+}
+
+.data-entry-field {
+    @apply flex-1;
+}
+
+.data-entry-actions {
+    @apply flex gap-6 justify-center mt-12;
+}

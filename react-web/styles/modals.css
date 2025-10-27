@@ -1,0 +1,32 @@
+.modal-overlay {
+    @apply fixed inset-0 bg-black/50 flex justify-center items-center z-[100];
+}
+
+.modal-content {
+    @apply bg-white p-8 rounded-lg w-[90%] max-w-md relative;
+}
+
+.modal-close {
+    @apply absolute top-4 right-4 bg-[#C9082A] text-white border-0 w-8 h-8 rounded cursor-pointer font-bold;
+}
+
+.modal-title {
+    @apply text-[#17408B] text-2xl font-bold mb-6 text-center;
+}
+
+.form-group {
+    @apply mb-6;
+}
+
+.form-label {
+    @apply block text-[#17408B] font-semibold mb-2;
+}
+
+.form-input,
+.form-select {
+    @apply w-full px-3 py-3 border-2 border-[#17408B] rounded text-black focus:outline-none focus:border-[#C9082A];
+}
+
+.form-buttons {
+    @apply flex gap-20 justify-center mt-8;
+}

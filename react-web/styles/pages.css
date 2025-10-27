@@ -1,0 +1,13 @@
+.pagination {
+    @apply flex justify-center items-center gap-2 mt-4 p-4;
+}
+
+.pagination-button {
+    @apply bg-white text-[#17408B] border-2 border-[#17408B]
+    px-4 py-2 rounded cursor-pointer font-bold transition-all hover:bg-[#17408B]
+    hover:text-white disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.pagination-button.active {
+    @apply bg-[#17408B] text-white border-[#17408B];
+}

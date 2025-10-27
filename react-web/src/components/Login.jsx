@@ -30,24 +30,27 @@ export default function Login({isOpen, onClose, onSuccess}) {
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <button type="button" onClick={handleClose}>X</button>
-                <div>
-                    <label>Email</label>
+        <div className="modal-overlay">
+            <form onSubmit={handleSubmit} className="modal-content">
+                <button type="button" onClick={handleClose} className="modal-close">X</button>
+                <h1 className="modal-title">LOGIN</h1>
+                <div className="form-group">
+                    <label className="form-label">Email</label>
                     <input type="email" required value={email}
-                    onChange={(e) => setEmail(e.target.value)}/>
+                    onChange={(e) => setEmail(e.target.value)}
+                    className='form-input'/>
                 </div>
 
-                <div>
-                    <label>Password</label>
+                <div className="form-group">
+                    <label className="form-label">Password</label>
                     <input type="password" required value={password}
-                           onChange={(e) => setPassword(e.target.value)}/>
+                           onChange={(e) => setPassword(e.target.value)}
+                    className="form-input"/>
                 </div>
 
-                <div>
-                    <button type="submit">Login</button>
-                    <button type="button" onClick={handleClose}>Cancel</button>
+                <div className="form-buttons">
+                    <button type="submit" className="btn-primary">Login</button>
+                    <button type="button" onClick={handleClose} className="btn-secondary">Cancel</button>
                 </div>
             </form>
         </div>

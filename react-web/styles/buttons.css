@@ -1,0 +1,13 @@
+.btn-primary {
+    @apply bg-[#17408B] text-white px-8 py-3 border-0 rounded
+    font-bold cursor-pointer transition-colors hover:bg-blue-800;
+}
+
+.btn-secondary {
+    @apply bg-[#C9082A] text-white px-8 py-3 border-0 rounded font-bold
+    cursor-pointer transition-colors hover:bg-red-700;
+}
+
+.btn-link {
+    @apply bg-transparent px-2 py-2 border-0 underline cursor-pointer text-sm;
+}

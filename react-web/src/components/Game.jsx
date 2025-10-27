@@ -5,10 +5,11 @@ export default function Game({game}) {
     const homeTeam = game.homeTeam;
 
     const includesStats = homeTeam.winRate !== undefined || awayTeam.winRate !== undefined;
+    const hasScores = game.awayScore !== 0 || game.homeScore !== 0;
 
     return (
         <div className="game-card">
-            <div id="basics" className="game-basic-info">
+            <div id="basics" className={hasScores ? 'game-basic-info' : 'game-basic-info-no-score'}>
                 {awayTeam.logoFName && (
                     <img src={`/public/uploads/${awayTeam.logoFName}`} alt={`${awayTeam.name}-logo`}
                     className="game-team-logo"/>
@@ -27,16 +28,16 @@ export default function Game({game}) {
                     <p className="game-datetime-date">{game.gameDate}</p>
                     <p className="game-datetime-at">AT</p>
                 </div>
-                <div className="game-team-info">
-                    <h3 className="game-team-label">HOME</h3>
-                    <p className="game-team-name">{homeTeam.name}</p>
-                </div>
                 {game.homeScore !== 0 && (
                     <div className="game-score">
                         <h3 className="game-score-label">SCORE</h3>
                         <p className="game-score-value">{game.homeScore}</p>
                     </div>
                 )}
+                <div className="game-team-info">
+                    <h3 className="game-team-label">HOME</h3>
+                    <p className="game-team-name">{homeTeam.name}</p>
+                </div>
                 {homeTeam.logoFName && (
                     <img src={`/public/uploads/${homeTeam.logoFName}`} alt={`${homeTeam.name}-logo`}
                          className="game-team-logo"/>

@@ -187,7 +187,9 @@ def top_teams():
             "id": team["id"],
             "name": team["name"],
             "logoFName": team["logoFName"],
-            "winRate": winRate
+            "winRate": winRate,
+            "avgPoints": team_point_avg(team["name"]),
+            "avgDiff": team_diff_avg(team["name"])
         })
 
     teamStats.sort(key=lambda t: t["winRate"], reverse=True)
