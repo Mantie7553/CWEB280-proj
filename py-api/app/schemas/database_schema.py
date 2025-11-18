@@ -1,9 +1,8 @@
 # Created 2025/10/20
 # This file handles structuring the Team table for our database
 import sqlalchemy as sa
-from sqlalchemy import Column
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import create_engine, event
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, create_engine, event
 
 import app.config
 
@@ -25,6 +24,30 @@ class Game(Base):
     awayTeam = Column(sa.Integer, sa.ForeignKey("Team.id"), index=True, nullable=False)
     homeScore = Column(sa.Integer, nullable=False)
     awayScore = Column(sa.Integer, nullable=False)
+
+
+class SeriesGames(Base):
+    __tablename__ = "SeriesGames"
+    seriesGameId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
+    seriesId = Column(sa.Integer, index=True, nullable=False)
+    gameId = Column(sa.Integer, index=True, nullable=False)
+
+
+class Series(Base):
+    __tablename__ = "Series"
+    seriesId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
+    seriesName = Column(sa.String(100), nullable=False)
+    seriesType = Column(sa.String(100), nullable=False)
+    description = Column(sa.String(255), nullable=False)
+    startDate = Column(sa.Date, nullable=False)
+    endDate = Column(sa.Date, nullable=False)
+
+
+class User(Base):
+    __tablename__ = "User"
+    userId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
+    email = Column(sa.String(255), nullable=False)
+    password = Column(sa.String(255), nullable=False)
 
 
 engine = create_engine(app.config.DB_PATH, echo=True, future=True)

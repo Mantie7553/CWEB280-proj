@@ -3,7 +3,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import DataEntry from "./routes/DataEntry.jsx";
 import Home from "./routes/Home.jsx"
 import Stats from "./routes/Stats.jsx"
-import Login from "./components/Login.jsx";
+import Login from "./components/modals/Login.jsx";
 import Navbar from "./components/Navbar.jsx";
 
 /**

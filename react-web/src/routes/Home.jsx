@@ -1,4 +1,4 @@
-import List from "../components/List.jsx";
+import List from "../components/list-parts/List.jsx";
 
 /**
  * Home page that displays three lists for the:

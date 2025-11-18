@@ -1,4 +1,4 @@
-import List from "../components/List.jsx";
+import List from "../components/list-parts/List.jsx";
 import { useState } from "react";
 
 /**

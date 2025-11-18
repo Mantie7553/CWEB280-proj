@@ -1,5 +1,8 @@
 import {useState, useEffect} from "react";
-import TeamAdd from "../components/TeamAdd.jsx";
+import TeamAdd from "../components/modals/TeamAdd.jsx";
+import DateInput from "../components/form-parts/DateInput.jsx";
+import Button from "../components/form-parts/Button.jsx";
+import CreateSeries from "../components/modals/CreateSeries.jsx";
 
 /**
  * Creates the Data Entry page, used to enter new data into the database
@@ -8,7 +11,8 @@ import TeamAdd from "../components/TeamAdd.jsx";
  * @authors Mantie7553, Kinley6573
  */
 export default function DataEntry() {
-    const [showModal, setShowModal] = useState(false);
+    const [showTeamAdd, setShowTeamAdd] = useState(false);
+    const [showCreateSeries, setShowCreateSeries] = useState(false);
     const [dateTime, setDateTime] = useState('');
     const [homeTeam, setHomeTeam] = useState('');
     const [homeTeamId, setHomeTeamId] = useState(null);
@@ -149,22 +153,11 @@ export default function DataEntry() {
 
     return (
         <div className="data-entry-container">
-
-            <div className="data-entry-datetime">
-                <label className="data-entry-label">
-                    Date
-                </label>
-                <input
-                    type="date"
-                    value={dateTime}
-                    onChange={(e) => setDateTime(e.target.value)}
-                    className="data-entry-input"
-                    required
-                />
-            </div>
+            <div className="border">
+                <DateInput label="Date" dateTime={dateTime} setDateTime={setDateTime} />
                 {/* map here to cut down on the amount of duplicate code */}
-            {sections.map((section, index) => {
-                return (
+                {sections.map((section, index) => {
+                    return (
                         <div key={index} className="data-entry-section">
                             <h2 className="data-entry-section-title">
                                 {section.title}
@@ -196,10 +189,8 @@ export default function DataEntry() {
                                             <option disabled>Loading teams...</option>
                                         )}
                                     </select>
-                                    <button type="button" onClick={() => setShowModal(true)}
-                                    className="btn-link">
-                                        Don't see the team you need? Add one
-                                    </button>
+                                    <Button onClick={() => setShowTeamAdd(true)}
+                                            className="btn-link" text="Don't see the team you need? Add one"/>
                                 </div>
 
                                 <div className="data-entry-field">
@@ -218,22 +209,23 @@ export default function DataEntry() {
                             </div>
                         </div>
                     )
-            })}
+                })}
 
-            <div className="flex gap-6 justify-center">
-                <button onClick={handleSave} className="btn-primary">
-                    SAVE GAME
-                </button>
-                <button onClick={handleClear} className="btn-secondary">
-                    CLEAR
-                </button>
+                <div className="flex gap-6 justify-center">
+                    <Button onClick={handleSave} className="btn-primary" text="SAVE GAME"/>
+                    <Button onClick={handleClear} className="btn-secondary" text="DELETE GAME"/>
+                    <Button onClick={handleClear} className="btn-secondary" text="CLEAR"/>
+                </div>
+                {/* modal for adding a team */}
+                <TeamAdd
+                    isOpen={showTeamAdd}
+                    onClose={() => setShowTeamAdd(false)}
+                    onSuccess={handleTeamAdded}
+                />
             </div>
-            {/* modal for adding a team */}
-            <TeamAdd
-                isOpen={showModal}
-                onClose={() => setShowModal(false)}
-                onSuccess={handleTeamAdded}
-            />
+
+            <Button onClick={() => setShowCreateSeries(true)} className="btn-primary" text="CREATE SERIES" />
+            <CreateSeries isOpen={showCreateSeries} onClose={() =>setShowCreateSeries(false)} />
         </div>
     )
 }

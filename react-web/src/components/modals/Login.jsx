@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {confirmAccount} from "../controllers/account-controller.jsx";
+import {confirmAccount} from "../../controllers/account-controller.jsx";
 
 /**
  * Modal for handling user authentication

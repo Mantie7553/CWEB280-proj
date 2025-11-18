@@ -1,4 +1,6 @@
 import {useState} from "react";
+import TextInput from "../form-parts/TextInput.jsx";
+import Button from "../form-parts/Button.jsx";
 
 /**
  * A modal used in the Data Entry page for adding new teams to the database
@@ -112,21 +114,11 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2 className="modal-title">Add New Team</h2>
+                <h2 className="modal-title">Add Team</h2>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label className="form-label">
-                            Team Name
-                        </label>
-                        <input
-                            type="text"
-                            value={teamName}
-                            onChange={(e) => setTeamName(e.target.value)}
-                            className="form-input"
-                            required
-                        />
-                    </div>
+
+                    <TextInput label="Team Name" value={teamName} setValue={setTeamName}/>
 
                     <div className="form-group">
                         <label className="form-label">
@@ -158,15 +150,17 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
                             className="btn-primary"
                             disabled={isUploading}
                         >
-                            {isUploading ? 'Adding...' : 'Add Team'}
+                            {isUploading ? 'ADDING...' : 'ADD TEAM'}
                         </button>
+                        <Button onClick={() => console.log('Delete clicked')}
+                                className="btn-secondary" text="DELETE TEAM"/>
                         <button
                             type="button"
                             onClick={handleClose}
                             className="btn-secondary"
                             disabled={isUploading}
                         >
-                            Cancel
+                            CANCEL
                         </button>
                     </div>
                 </form>
