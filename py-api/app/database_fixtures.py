@@ -6,7 +6,8 @@ from datetime import date
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 import random
-from app.schemas.database_schema import Team, Game
+from app.schemas.database_schema import Team, Game, Series, SeriesGames
+
 
 def gen_teams(session: Session):
     teamsToUse = []
@@ -53,6 +54,7 @@ def gen_teams(session: Session):
 
     session.add_all(teamsToUse)
     session.commit()
+
 
 def gen_games(session: Session):
     gamesToUse = []
@@ -261,6 +263,144 @@ def gen_games(session: Session):
     session.commit()
 
 
+def gen_series(session: Session):
+    """Generate dummy series data with various types and game associations"""
+    seriesToUse = []
+
+    # Series 1: Lakers vs Celtics Rivalry - Christmas Series
+    seriesToUse.append(Series(
+        seriesName="Lakers vs Celtics Holiday Showdown",
+        seriesType="Rivalry",
+        description="Historic rivalry matchups featuring Lakers and Celtics during the holiday season",
+        startDate=date(2024, 12, 20),
+        endDate=date(2024, 12, 25),
+    ))
+
+    # Series 2: October Opening Week
+    seriesToUse.append(Series(
+        seriesName="2024 Season Opener Week",
+        seriesType="Regular Season",
+        description="First week of the 2024-25 NBA season featuring exciting matchups",
+        startDate=date(2024, 10, 22),
+        endDate=date(2024, 10, 28),
+    ))
+
+    # Series 3: Thunder Rising - Thunder focused games
+    seriesToUse.append(Series(
+        seriesName="Thunder Rising Championship Run",
+        seriesType="Playoff Series",
+        description="Oklahoma City Thunder's impressive playoff run showcasing their young talent",
+        startDate=date(2024, 11, 5),
+        endDate=date(2024, 12, 15),
+    ))
+
+    # Series 4: Eastern Conference Showdown
+    seriesToUse.append(Series(
+        seriesName="Eastern Conference Elite Series",
+        seriesType="Conference",
+        description="Top Eastern Conference teams battle for supremacy",
+        startDate=date(2024, 10, 26),
+        endDate=date(2024, 11, 18),
+    ))
+
+    # Series 5: Heat vs Bulls Central Division Battle
+    seriesToUse.append(Series(
+        seriesName="Heat-Bulls Division Rivalry",
+        seriesType="Division",
+        description="Miami Heat and Chicago Bulls compete for Central Division bragging rights",
+        startDate=date(2024, 10, 28),
+        endDate=date(2025, 1, 8),
+    ))
+
+    # Series 6: Warriors Dynasty Games
+    seriesToUse.append(Series(
+        seriesName="Warriors Late Season Push",
+        seriesType="Regular Season",
+        description="Golden State Warriors fighting for playoff positioning",
+        startDate=date(2024, 10, 22),
+        endDate=date(2025, 1, 18),
+    ))
+
+    # Series 7: New Year's Showcase
+    seriesToUse.append(Series(
+        seriesName="New Year's Basketball Showcase",
+        seriesType="Special Event",
+        description="Marquee matchups to ring in the new year",
+        startDate=date(2025, 1, 3),
+        endDate=date(2025, 1, 18),
+    ))
+
+    # Series 8: Fall Classic 2025
+    seriesToUse.append(Series(
+        seriesName="Fall Classic 2025",
+        seriesType="Regular Season",
+        description="Early season games featuring top contenders for the 2025-26 season",
+        startDate=date(2025, 10, 1),
+        endDate=date(2025, 10, 15),
+    ))
+
+    session.add_all(seriesToUse)
+    session.commit()
+
+
+def link_series_games(session: Session):
+    """Link games to series through the SeriesGames junction table"""
+    seriesGamesToUse = []
+
+    # Series 1: Lakers vs Celtics Holiday Showdown (games 15, 16)
+    seriesGamesToUse.append(SeriesGames(seriesId=1, gameId=15))  # Dec 20 - Celtics @ Lakers
+    seriesGamesToUse.append(SeriesGames(seriesId=1, gameId=16))  # Dec 25 - Lakers @ Celtics
+
+    # Series 2: 2024 Season Opener Week (games 1-4)
+    seriesGamesToUse.append(SeriesGames(seriesId=2, gameId=1))  # Oct 22 - Warriors @ Raptors
+    seriesGamesToUse.append(SeriesGames(seriesId=2, gameId=2))  # Oct 24 - Thunder @ Pacers
+    seriesGamesToUse.append(SeriesGames(seriesId=2, gameId=3))  # Oct 26 - Celtics @ Lakers
+    seriesGamesToUse.append(SeriesGames(seriesId=2, gameId=4))  # Oct 28 - Bulls @ Heat
+
+    # Series 3: Thunder Rising Championship Run (games 2, 6, 9, 14, 17)
+    seriesGamesToUse.append(SeriesGames(seriesId=3, gameId=2))  # Oct 24 - Thunder @ Pacers
+    seriesGamesToUse.append(SeriesGames(seriesId=3, gameId=6))  # Nov 5 - Lakers @ Thunder
+    seriesGamesToUse.append(SeriesGames(seriesId=3, gameId=9))  # Nov 15 - Thunder @ Raptors
+    seriesGamesToUse.append(SeriesGames(seriesId=3, gameId=14))  # Dec 15 - Raptors @ Thunder
+    seriesGamesToUse.append(SeriesGames(seriesId=3, gameId=17))  # Jan 3 - Thunder @ Bulls
+
+    # Series 4: Eastern Conference Elite Series (games 3, 7, 10)
+    seriesGamesToUse.append(SeriesGames(seriesId=4, gameId=3))  # Oct 26 - Celtics @ Lakers
+    seriesGamesToUse.append(SeriesGames(seriesId=4, gameId=7))  # Nov 8 - Raptors @ Celtics
+    seriesGamesToUse.append(SeriesGames(seriesId=4, gameId=10))  # Nov 18 - Celtics @ Pacers
+
+    # Series 5: Heat-Bulls Division Rivalry (games 4, 8, 12, 17, 18)
+    seriesGamesToUse.append(SeriesGames(seriesId=5, gameId=4))  # Oct 28 - Bulls @ Heat
+    seriesGamesToUse.append(SeriesGames(seriesId=5, gameId=8))  # Nov 10 - Heat @ Bulls
+    seriesGamesToUse.append(SeriesGames(seriesId=5, gameId=12))  # Dec 5 - Pacers @ Heat
+    seriesGamesToUse.append(SeriesGames(seriesId=5, gameId=17))  # Jan 3 - Thunder @ Bulls
+    seriesGamesToUse.append(SeriesGames(seriesId=5, gameId=18))  # Jan 8 - Heat @ Pacers
+
+    # Series 6: Warriors Late Season Push (games 1, 5, 11, 13, 20)
+    seriesGamesToUse.append(SeriesGames(seriesId=6, gameId=1))  # Oct 22 - Warriors @ Raptors
+    seriesGamesToUse.append(SeriesGames(seriesId=6, gameId=5))  # Nov 2 - Pacers @ Warriors
+    seriesGamesToUse.append(SeriesGames(seriesId=6, gameId=11))  # Dec 1 - Warriors @ Lakers
+    seriesGamesToUse.append(SeriesGames(seriesId=6, gameId=13))  # Dec 10 - Bulls @ Warriors
+    seriesGamesToUse.append(SeriesGames(seriesId=6, gameId=20))  # Jan 18 - Celtics @ Warriors
+
+    # Series 7: New Year's Basketball Showcase (games 17, 18, 19, 20)
+    seriesGamesToUse.append(SeriesGames(seriesId=7, gameId=17))  # Jan 3 - Thunder @ Bulls
+    seriesGamesToUse.append(SeriesGames(seriesId=7, gameId=18))  # Jan 8 - Heat @ Pacers
+    seriesGamesToUse.append(SeriesGames(seriesId=7, gameId=19))  # Jan 12 - Lakers @ Raptors
+    seriesGamesToUse.append(SeriesGames(seriesId=7, gameId=20))  # Jan 18 - Celtics @ Warriors
+
+    # Series 8: Fall Classic 2025 (games 21, 22, 23, 24)
+    seriesGamesToUse.append(SeriesGames(seriesId=8, gameId=21))  # Oct 1 - Warriors @ Thunder
+    seriesGamesToUse.append(SeriesGames(seriesId=8, gameId=22))  # Oct 5 - Heat @ Celtics
+    seriesGamesToUse.append(SeriesGames(seriesId=8, gameId=23))  # Oct 10 - Bulls @ Raptors
+    seriesGamesToUse.append(SeriesGames(seriesId=8, gameId=24))  # Oct 15 - Thunder @ Lakers
+
+    session.add_all(seriesGamesToUse)
+    session.commit()
+
 def clear_db(session: Session):
+    session.execute(delete(SeriesGames))
+    session.execute(delete(Series))
     session.execute(delete(Game))
     session.execute(delete(Team))
+    session.commit()

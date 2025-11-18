@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app import config
-from app.database_fixtures import gen_teams, clear_db, gen_games
+from app.database_fixtures import gen_teams, clear_db, gen_games, gen_series, link_series_games
 
 engine = create_engine(config.DB_PATH, echo=True, future=True)
 
@@ -12,3 +12,5 @@ def reset_teams():
         clear_db(session)
         gen_teams(session)
         gen_games(session)
+        gen_series(session)
+        link_series_games(session)

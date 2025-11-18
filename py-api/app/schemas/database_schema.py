@@ -29,8 +29,8 @@ class Game(Base):
 class SeriesGames(Base):
     __tablename__ = "SeriesGames"
     seriesGameId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
-    seriesId = Column(sa.Integer, index=True, nullable=False)
-    gameId = Column(sa.Integer, index=True, nullable=False)
+    seriesId = Column(sa.Integer, sa.ForeignKey("Series.seriesId", ondelete="CASCADE"), index=True, nullable=False)
+    gameId = Column(sa.Integer, sa.ForeignKey("Game.id", ondelete="CASCADE"), index=True, nullable=False)
 
 
 class Series(Base):

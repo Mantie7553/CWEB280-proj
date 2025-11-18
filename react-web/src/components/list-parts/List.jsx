@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import Game from "./Game.jsx";
 import EmptyGame from "./EmptyGame.jsx";
 import EmptyTeam from "./EmptyTeam.jsx";
+import {useNavigate} from "react-router-dom";
 
 /**
  * A React component that lists a number of Team or Game objects
@@ -15,7 +16,8 @@ import EmptyTeam from "./EmptyTeam.jsx";
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function List({sectionName}) {
+export default function List({sectionName, canSelect, setCanSelect, selectedGames, setSelectedGames}) {
+    const navigate = useNavigate();
 
     const[info, setInfo] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,7 +26,8 @@ export default function List({sectionName}) {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
-    const gameOrTeam = sectionName === "TOP TEAMS" || sectionName === "TEAMS" ? 'team' : 'game';
+    const showHeader = ['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
+    const showPagination = ['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
 
     /**
      * useEffect to fetch the data for a given list
@@ -54,6 +57,12 @@ export default function List({sectionName}) {
                 case "TEAMS":
                     url = `${import.meta.env.VITE_API_BASE_URL}/team/stats/${currentPage}`;
                     break;
+                case "SERIES":
+                    url = `${import.meta.env.VITE_API_BASE_URL}/series/${currentPage}`;
+                    break;
+                case "FEATURED SERIES":
+                    url = `${import.meta.env.VITE_API_BASE_URL}/series/1?filter=featured`;
+                    break;
             }
             fetch(url)
                 .then((resp) => {
@@ -71,6 +80,20 @@ export default function List({sectionName}) {
                         setInfo(teams);
                         if (data.pageCount) setTotalPages(data.pageCount);
                         if (data.totalTeams) setTotalItems(data.totalTeams);
+                    }
+                    else if (data.series) {
+                        let series = [...data.series];
+                        if (sectionName === 'SERIES') {
+                            while (series.length < 5) {
+                                series.push(null);
+                            }
+                        }
+                        if (sectionName === 'FEATURED SERIES') {
+                            series = series.slice(0,3);
+                        }
+                        setInfo(series);
+                        if (data.pageCount) setTotalPages(data.pageCount);
+                        if (data.totalSeries) setTotalItems(data.totalSeries);
                     }
                     else {
                         let games = [...data.games];
@@ -95,13 +118,17 @@ export default function List({sectionName}) {
         fetchList()
     }, [sectionName, currentPage]);
 
+    const handleSeriesClick = (seriesId) => {
+        navigate(`/series/${seriesId}`);
+    }
+
     /**
      * Displays a list while data is being fetched from the database
      */
     if (loading) {
         return (
             <div className={'list-section-team'}>
-                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && sectionName !== 'SERIES' && (
                     <h2 className="list-header">{sectionName}</h2>
                 )}                <div className="loading-container">
                     <div>Loading...</div>
@@ -115,13 +142,22 @@ export default function List({sectionName}) {
         );
     }
 
+
+    const handleGameSelect = (gameId) => {
+        if (selectedGames.includes(gameId)) {
+            setSelectedGames(selectedGames.filter(id => id !== gameId));
+        } else {
+            setSelectedGames([...selectedGames, gameId]);
+        }
+    };
+
     /**
      *  Displays a list with an error
      */
     if (error) {
         return (
             <div className={'list-section-team'}>
-                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && sectionName !== 'SERIES' && (
                     <h2 className="list-header">{sectionName}</h2>
                 )}                <div className="error-container">
                     <div>Error: {error}</div>
@@ -147,9 +183,10 @@ export default function List({sectionName}) {
     if (info.length === 0) {
         return (
             <div className={'list-section-team'}>
-                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+                {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && sectionName !== 'SERIES' && (
                     <h2 className="list-header">{sectionName}</h2>
-                )}                <div className="empty-container">
+                )}
+                <div className="empty-container">
                     <div>No data available</div>
                 </div>
                 {Array.from({length: 4}).map((temp, index) => {
@@ -167,13 +204,14 @@ export default function List({sectionName}) {
         );
     }
 
+
     /**
      * Standard return when there is data to display
      *  Any empty positions will be filled with placeholder values
      */
     return (
         <div className={sectionName === 'game' ? 'list-section-game' : 'list-section-team'}>
-            {sectionName !== 'GAMES' && sectionName !== 'TEAMS' && (
+            {showHeader && (
                 <h2 className="list-header">{sectionName}</h2>
             )}
             {info.map((item, index) => {
@@ -191,11 +229,29 @@ export default function List({sectionName}) {
 
                 if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
                     return <Team key={item.id || index} team={item}/>
+                } else  if (sectionName === 'SERIES' || sectionName === 'FEATURED SERIES') {
+                    return (
+                        <div key={item.id || index}
+                        onClick={() => handleSeriesClick(item.id)}
+                        style={{cursor: 'pointer'}}>
+                            <h3>{item.name}</h3>
+                            <p>Type: {item.type}</p>
+                            <p>{item.description}</p>
+                            <p>{item.start} to {item.end}</p>
+                            <p>Games: {item.totalGames}</p>
+                        </div>
+                    )
                 } else {
-                    return <Game key={item.id || index} game={item}/>
+                    return <Game
+                        key={item.id || index}
+                        game={item}
+                        canSelect={canSelect}
+                        isSelected={selectedGames && selectedGames.includes(item.id)}
+                        onSelect={handleGameSelect}
+                    />
                 }
             })}
-            {(sectionName === 'GAMES' || sectionName === 'TEAMS') && (
+            {showPagination && (
                 <Pages
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}

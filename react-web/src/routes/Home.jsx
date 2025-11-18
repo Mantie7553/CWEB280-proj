@@ -17,6 +17,9 @@ export default function Home() {
                 <List sectionName="UPCOMING"/>
                 <List sectionName="RECENT"/>
             </div>
+            <div>
+                <List sectionName="FEATURED SERIES" />
+            </div>
         </div>
     )
 

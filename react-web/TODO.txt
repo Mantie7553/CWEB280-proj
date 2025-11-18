@@ -1,8 +1,7 @@
 Next steps
 -   Add functionality to all new buttons
--   Add lists for Series
--   Connect backend to front end
 -   Delete and update functionality
 -   Authentication
 -   Testing
--   Updated Add Games list for Series to have select buttons
+-   fix all displays
+-

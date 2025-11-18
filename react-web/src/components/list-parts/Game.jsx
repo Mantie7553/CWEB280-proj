@@ -1,3 +1,5 @@
+import Button from "../form-parts/Button.jsx";
+
 /**
  * A React component that shows information related to a given game
  *  - displays both teams logos if present
@@ -5,11 +7,14 @@
  *  - displays the date for a game
  *  - optionally lists the following stats for both teams: win rate, average points, and average point differential
  * @param game an object containing attributes related to an NBA game
+ * @param canSelect boolean for hiding / showing select button
+ * @param isSelected
+ * @param onSelect
  * @returns {JSX.Element} displaying information for a given NBA game
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function Game({game}) {
+export default function Game({game, canSelect, isSelected, onSelect}) {
 
     const awayTeam = game.awayTeam;
     const homeTeam = game.homeTeam;
@@ -17,8 +22,20 @@ export default function Game({game}) {
     const includesStats = homeTeam.winRate !== undefined || awayTeam.winRate !== undefined;
     const hasScores = game.awayScore !== 0 || game.homeScore !== 0;
 
+    const handleSelectClick = () => {
+        if (onSelect) {
+            onSelect(game.id);
+        }
+    }
+
     return (
         <div className="game-card">
+            {canSelect && (
+                <div>
+                    <Button onClick={handleSelectClick}
+                            className="btn-secondary" text={isSelected ? "Selected" : "Select"}/>
+                </div>
+            )}
             <div id="basics" className={hasScores ? 'game-basic-info' : 'game-basic-info-no-score'}>
                 <img
                     src={awayTeam.logoFName ? `/public/uploads/${awayTeam.logoFName}` : '/NBA-Logo.png'}

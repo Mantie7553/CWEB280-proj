@@ -10,6 +10,7 @@ import { useState } from "react";
 export default function Stats() {
     const [showGames, setShowGames] = useState(true);
     const [showTeams, setShowTeams] = useState(true);
+    const [showSeries, setShowSeries] = useState(true);
 
     return (
         <div className="grid grid-cols-1 gap-2">
@@ -33,6 +34,17 @@ export default function Stats() {
                     <span className="collapse-icon">{showTeams ? '▼' : '▶'}</span>
                 </div>
                 {showTeams && <List sectionName="TEAMS"/>}
+            </div>
+
+            <div className="list-section">
+                <div
+                    className="list-header-collapsible"
+                    onClick={() => setShowSeries(!showSeries)}
+                >
+                    <span>SERIES</span>
+                    <span className="collapse-icon">{showSeries ? '▼' : '▶'}</span>
+                </div>
+                {showSeries && <List sectionName="SERIES"/>}
             </div>
         </div>
     )

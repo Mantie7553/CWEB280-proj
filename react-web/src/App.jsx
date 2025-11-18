@@ -5,6 +5,7 @@ import Home from "./routes/Home.jsx"
 import Stats from "./routes/Stats.jsx"
 import Login from "./components/modals/Login.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Series from "./routes/Series.jsx";
 
 /**
  * Handles the routing between pages, and saving and removing account info from the
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="/" element={<Home/>} />
             <Route path="/stats" element={<Stats/>} />
             <Route path="/data-entry" element={<DataEntry/>}/>
+            <Route path="/series/:seriesId" element={<Series/>}/>
         </Routes>
         <Login isOpen={showLogin} onClose={() => setShowLogin(false)} onSuccess={handleLoggedIn}/>
     </BrowserRouter>
