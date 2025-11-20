@@ -12,11 +12,14 @@ import {useNavigate} from "react-router-dom";
  *  - can display loading, error, or empty list with placeholder items
  *  - pagination for a list is optional (only for TEAMS or GAMES sections)
  * @param sectionName the title / name of the current section
+ * @param canSelect
+ * @param selectedGames
+ * @param setSelectedGames
  * @returns {JSX.Element}
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function List({sectionName, canSelect, setCanSelect, selectedGames, setSelectedGames}) {
+export default function List({sectionName, canSelect, selectedGames, setSelectedGames}) {
     const navigate = useNavigate();
 
     const[info, setInfo] = useState([]);

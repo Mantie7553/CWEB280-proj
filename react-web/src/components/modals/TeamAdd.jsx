@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import TextInput from "../form-parts/TextInput.jsx";
 import Button from "../form-parts/Button.jsx";
 
@@ -8,17 +8,33 @@ import Button from "../form-parts/Button.jsx";
  * @param isOpen boolean for checking if the modal is open or not
  * @param onClose function that handles closing the modal
  * @param onSuccess function for handling when data is successfully submitted
+ * @param editTeam
  * @returns {JSX.Element|null} returns a modal used for entering a new team into the database
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function TeamAdd({isOpen, onClose, onSuccess}) {
+export default function TeamAdd({isOpen, onClose, onSuccess, editTeam = null}) {
     const [teamName, setTeamName] = useState('');
     const [logoFile, setLogoFile] = useState(null);
     const [logoPreview, setLogoPreview] = useState('');
     const [isUploading, setIsUploading] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [keepExistingLogo, setKeepExistingLogo] = useState(true);
 
-    if (!isOpen) return null;
+    // Load team data when editTeam changes
+    useEffect(() => {
+        if (editTeam) {
+            setIsEditMode(true);
+            setTeamName(editTeam.name);
+            setLogoFile(null);
+            setKeepExistingLogo(true);
+        } else {
+            setIsEditMode(false);
+            setTeamName('');
+            setLogoFile(null);
+            setKeepExistingLogo(true);
+        }
+    }, [editTeam]);
 
     /**
      * File upload handler
@@ -43,6 +59,7 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
             }
 
             setLogoFile(file);
+            setKeepExistingLogo(false);
             const previewUrl = URL.createObjectURL(file);
             setLogoPreview(previewUrl);
         }
@@ -54,13 +71,57 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
      *  - calls the onClose function from DataEntry.jsx
      */
     const handleClose = () => {
-        setTeamName('');
-        setLogoFile(null);
+        handleClear();
         if (logoPreview) {
             URL.revokeObjectURL(logoPreview);
         }
         setLogoPreview('');
         onClose();
+    };
+
+    /**
+     * Clears all form fields
+     */
+    const handleClear = () => {
+        setTeamName('');
+        setLogoFile(null);
+        setKeepExistingLogo(true);
+    };
+
+    /**
+     * Handles deleting the team
+     */
+    const handleDelete = () => {
+        if (!isEditMode || !editTeam) {
+            alert('No team selected to delete');
+            return;
+        }
+
+        if (!window.confirm(`Are you sure you want to delete ${editTeam.name}?`)) {
+            return;
+        }
+
+        setIsUploading(true);
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/team/delete/${editTeam.id}`, {method: 'DELETE'})
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error(resp.error || 'Failed to delete team');
+                }
+                return resp.json();
+            })
+            .then(data => {
+                alert('Team deleted successfully');
+                handleClear();
+                onSuccess();
+                onClose();
+            })
+            .catch(err => {
+                alert(`Failed to delete team: ${err.message}`);
+            })
+            .finally(() => {
+                setIsUploading(false);
+            })
     };
 
     /**
@@ -86,8 +147,18 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
                 formData.append('logoFile', logoFile);
             }
 
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team/add`, {
-                method: 'POST',
+            if (isEditMode) {
+                formData.append('keepExistingLogo', keepExistingLogo);
+            }
+
+            const url = isEditMode
+                ? `${import.meta.env.VITE_API_BASE_URL}/team/update/${editTeam.id}`
+                : `${import.meta.env.VITE_API_BASE_URL}/team/add`;
+
+            const method = isEditMode ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
                 body: formData
             });
 
@@ -97,25 +168,31 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
                 throw new Error(data.error || 'Failed to add team');
             }
 
-            alert(`Team "${data.name}" added successfully!`);
-            handleClose();
-
-            if (onSuccess) {
-                onSuccess(data);
+            if (data.id) {
+                const action = isEditMode ? 'updated' : 'added';
+                alert(`Team ${action} successfully: ${data.name}`);
+                handleClear();
+                onSuccess();
+                onClose();
             }
-
         } catch (error) {
-            alert(`Error adding team: ${error.message}`);
+            alert(`Failed to ${isEditMode ? 'update' : 'add'} team. Please try again.`);
         } finally {
             setIsUploading(false);
         }
     };
 
+    if (!isOpen) return null;
+
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2 className="modal-title">Add Team</h2>
-
+                <h2 className="modal-title">{isEditMode ? 'Edit' : 'Add'} Team</h2>
+                {isEditMode && (
+                    <div>
+                        Editing: {editTeam.name}
+                    </div>
+                )}
                 <form onSubmit={handleSubmit}>
 
                     <TextInput label="Team Name" value={teamName} setValue={setTeamName}/>
@@ -134,7 +211,11 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
                             Max 5MB - JPG, PNG, GIF, SVG, WebP
                         </p>
                     </div>
-
+                    {isEditMode && editTeam.logoFName && keepExistingLogo && !logoFile && (
+                        <div className="text-sm text-gray-600 mt-1">
+                            Current logo will be kept. Upload a new file to replace it.
+                        </div>
+                    )}
                     {logoPreview && (
                         <div className="mb-6">
                             <label className="block mb-2 font-semibold">Preview</label>
@@ -145,14 +226,14 @@ export default function TeamAdd({isOpen, onClose, onSuccess}) {
                     )}
 
                     <div className="form-buttons">
-                        <button
-                            type="submit"
+                        <Button
+                            onClick={handleSubmit}
                             className="btn-primary"
                             disabled={isUploading}
                         >
-                            {isUploading ? 'ADDING...' : 'ADD TEAM'}
-                        </button>
-                        <Button onClick={() => console.log('Delete clicked')}
+                            {isEditMode ? 'UPDATE TEAM' : 'ADD TEAM'}
+                        </Button>
+                        <Button onClick={handleDelete}
                                 className="btn-secondary" text="DELETE TEAM"/>
                         <button
                             type="button"

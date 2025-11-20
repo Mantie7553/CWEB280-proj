@@ -34,7 +34,7 @@ def query_teams(teamName: str | None = None):
 # pydantic model
 class TeamData(BaseModel):
     teamName: str
-    teamLogoFName: str
+    teamLogoFName: str | None = None
 
 # adds a new team entry in the database if they do not already exist
 def add_team(data: TeamData):
@@ -262,3 +262,71 @@ def team_with_stats_paged(page: int):
         "page": page
     }
 
+
+# update an existing team
+def update_team(team_id: int, data: TeamData):
+    with Session(engine) as session:
+        team = session.query(Team).filter(Team.id == team_id).first()
+
+        if not team:
+            return {"error": "Team not found"}
+
+        # Check if new name conflicts with another team
+        if data.teamName != team.name:
+            existing = session.query(Team).filter(
+                Team.name == data.teamName,
+                Team.id != team_id
+            ).first()
+
+            if existing:
+                return {"error": "Team with this name already exists"}
+
+        # Store old logo filename for potential deletion
+        old_logo = team.logoFName
+
+        # Update team fields
+        team.name = data.teamName
+
+        # Only update logo if a new value is provided
+        if data.teamLogoFName is not None:
+            team.logoFName = data.teamLogoFName
+
+        session.commit()
+        session.refresh(team)
+
+        return {
+            "id": team.id,
+            "name": team.name,
+            "logoFName": team.logoFName,
+            "oldLogoFName": old_logo,
+            "message": "Team updated successfully"
+        }
+
+
+# delete a team
+def delete_team(team_id: int):
+    with Session(engine) as session:
+        team = session.query(Team).filter(Team.id == team_id).first()
+
+        if not team:
+            return {"error": "Team not found"}
+
+        # Check if team has any games
+        game_count = session.query(Game).filter(
+            or_(Game.homeTeam == team_id, Game.awayTeam == team_id)
+        ).count()
+
+        if game_count > 0:
+            return {"error": f"Cannot delete team. Team has {game_count} associated games."}
+
+        team_info = {
+            "id": team.id,
+            "name": team.name,
+            "logoFName": team.logoFName,
+            "message": "Team deleted successfully"
+        }
+
+        session.delete(team)
+        session.commit()
+
+        return team_info

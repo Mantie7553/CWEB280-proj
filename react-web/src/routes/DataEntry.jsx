@@ -21,6 +21,8 @@ export default function DataEntry() {
     const [awayTeamId, setAwayTeamId] = useState(null);
     const [awayScore, setAwayScore] = useState(0);
     const [teamArray, setTeamArray] = useState([]);
+    const [editingGameId, setEditingGameId] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     /**
      * calls the fetch Teams functions when the page is loaded
@@ -28,6 +30,18 @@ export default function DataEntry() {
     useEffect(() => {
         fetchTeams();
     }, []);
+
+    /**
+     * Check for edit data passed through navigation
+     */
+    useEffect(() => {
+        if (location.state?.editGame) {
+            const game = location.state.editGame;
+            loadGameToEdit(game);
+            // Clear the state so it doesn't reload on refresh
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
 
     /**
      * Fetches teams from the database to be used
@@ -53,6 +67,22 @@ export default function DataEntry() {
      */
     const handleTeamAdded = () => {
         fetchTeams();
+    };
+
+    /**
+     * Load a game for editing
+     * @param {Object} game - The game object to edit
+     */
+    const loadGameToEdit = (game) => {
+        setEditingGameId(game.id);
+        setIsEditMode(true);
+        setDateTime(game.dateTime || game.gameDate);
+        setHomeTeamId(game.homeTeam.id);
+        setHomeTeam(game.homeTeam.name);
+        setHomeScore(game.homeScore);
+        setAwayTeamId(game.awayTeam.id);
+        setAwayTeam(game.awayTeam.name);
+        setAwayScore(game.awayScore);
     };
 
     /**
@@ -95,6 +125,8 @@ export default function DataEntry() {
         setHomeScore(0);
         setAwayTeam('Default Team');
         setAwayScore(0);
+        setEditingGameId(null);
+        setIsEditMode(false);
     };
 
     /**
@@ -123,9 +155,14 @@ export default function DataEntry() {
             awayScore: awayScore || 0
         };
 
+        const url = isEditMode
+            ? `${import.meta.env.VITE_API_BASE_URL}/game/update/${editingGameId}`
+            : `${import.meta.env.VITE_API_BASE_URL}/game/add`;
 
-        fetch(`${import.meta.env.VITE_API_BASE_URL}/game/add`, {
-            method: 'POST',
+        const method = isEditMode ? 'PUT' : 'POST'
+
+        fetch(url, {
+            method: method,
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(gameData)
         })
@@ -141,19 +178,54 @@ export default function DataEntry() {
                 }
                 if (data.id)
                 {
-                    alert(`Game ${data.id} Information Saved\n
+                    const action = isEditMode ? 'Updated' : 'Saved'
+                    alert(`Game ${data.id} Information ${action}\n
                     ${data.awayTeam} AT ${data.homeTeam}`);
                     handleClear();
                 }
             })
             .catch(err => {
-                alert("Unable to upload game\n" + err);
+                alert(`Unable to ${isEditMode ? 'update' : 'upload'} game` + err.message);
             })
     }
+
+    /**
+     * Delete the current game
+     */
+    const handleDelete = () => {
+        if (!editingGameId) {
+            alert('No game selected to delete');
+            return;
+        }
+
+        if (!window.confirm('Are you sure you want to delete this game?')) {
+            return;
+        }
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/game/delete/${editingGameId}`, {method: 'DELETE'})
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error(resp.error);
+                }
+            })
+            .then(data => {
+                alert('Game deleted successfully');
+                handleClear();
+            })
+            .catch(err => {
+                alert('Unable to delete game\n' + err.message);
+            })
+    };
 
     return (
         <div className="data-entry-container">
             <div className="border">
+                {isEditMode && (
+                    <div>
+                        <h3>Editing Game #{editingGameId}</h3>
+                        <Button onClick={handleClear} className="btn-primary" text="Cancel Edit / Create"/>
+                    </div>
+                )}
                 <DateInput label="Date" dateTime={dateTime} setDateTime={setDateTime} />
                 {/* map here to cut down on the amount of duplicate code */}
                 {sections.map((section, index) => {
@@ -201,7 +273,7 @@ export default function DataEntry() {
                                         type="number"
                                         value={section.score}
                                         className="data-entry-input"
-                                        onChange={(e) => section.setScore(parseInt(e.target.value))}
+                                        onChange={(e) => section.setScore(parseInt(e.target.value) || 0)}
                                         placeholder={"0"}
                                         required
                                     />
@@ -212,8 +284,10 @@ export default function DataEntry() {
                 })}
 
                 <div className="flex gap-6 justify-center">
-                    <Button onClick={handleSave} className="btn-primary" text="SAVE GAME"/>
-                    <Button onClick={handleClear} className="btn-secondary" text="DELETE GAME"/>
+                    <Button onClick={handleSave} className="btn-primary" text={isEditMode ? "UPDATE GAME" : "SAVE GAME"}/>
+                    {isEditMode && (
+                        <Button onClick={handleDelete} className="btn-secondary" text="DELETE GAME"/>
+                    )}
                     <Button onClick={handleClear} className="btn-secondary" text="CLEAR"/>
                 </div>
                 {/* modal for adding a team */}

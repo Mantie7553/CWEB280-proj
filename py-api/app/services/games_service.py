@@ -207,3 +207,61 @@ def add_game(data: GameData):
             "homeScore": game.homeScore,
             "awayScore": game.awayScore
         }
+
+
+# update an existing game
+def update_game(game_id: int, data: GameData):
+    with Session(engine) as session:
+        game = session.query(Game).filter(Game.id == game_id).first()
+
+        if not game:
+            return {"error": "Game not found"}
+
+        homeTeam = session.query(Team).filter(Team.id == data.homeTeam).first()
+        awayTeam = session.query(Team).filter(Team.id == data.awayTeam).first()
+
+        if homeTeam is None or awayTeam is None:
+            return {"error": "Home or away team not found"}
+
+        if homeTeam.id == awayTeam.id:
+            return {"error": "Home and away teams must be different"}
+
+        gameDate = datetime.fromisoformat(data.dateTime).date()
+
+        # Update the game fields
+        game.gameDate = gameDate
+        game.homeTeam = homeTeam.id
+        game.awayTeam = awayTeam.id
+        game.homeScore = data.homeScore
+        game.awayScore = data.awayScore
+
+        session.commit()
+        session.refresh(game)
+
+        return {
+            "id": game.id,
+            "homeTeam": homeTeam.name,
+            "awayTeam": awayTeam.name,
+            "homeScore": game.homeScore,
+            "awayScore": game.awayScore,
+            "message": "Game updated successfully"
+        }
+
+
+# delete a game
+def delete_game(game_id: int):
+    with Session(engine) as session:
+        game = session.query(Game).filter(Game.id == game_id).first()
+
+        if not game:
+            return {"error": "Game not found"}
+
+        game_info = {
+            "id": game.id,
+            "message": "Game deleted successfully"
+        }
+
+        session.delete(game)
+        session.commit()
+
+        return game_info

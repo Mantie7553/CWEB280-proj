@@ -1,7 +1,6 @@
 Next steps
 -   Add functionality to all new buttons
 -   Delete and update functionality
--   Authentication
 -   Testing
 -   fix all displays
 -
