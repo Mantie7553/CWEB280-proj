@@ -16,6 +16,8 @@ import { useLocation } from "react-router-dom";
  */
 export default function Navbar({ setShowLogin, showDataEntry, currentAccount, onLogout}) {
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const dropdownRef = useRef(null);
     const location = useLocation();
 
@@ -60,6 +62,41 @@ export default function Navbar({ setShowLogin, showDataEntry, currentAccount, on
         onLogout();
     }
 
+
+    /**
+     * Handles account deletion
+     */
+    const handleDeleteAccount = () => {
+        if (!currentAccount || !currentAccount.id) {
+            alert('No account logged in');
+            return;
+        }
+
+        setDeleting(true);
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/user/${currentAccount.id}`, {
+            method: 'DELETE',
+        })
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error(resp.detail || 'Account deletion failed')
+                }
+                return resp.json();
+            })
+            .then(data => {
+                setShowDeleteConfirm(false);
+                setShowDropdown(false);
+                alert('Account deleted successfully');
+                onLogout();
+            })
+            .catch((err) => {
+                alert(`Error: ${err.message}`)
+            })
+            .finally(() => {
+                setDeleting(false);
+            })
+    }
+
     /**
      * Allows for closing the dropdown when clicking outside the dropdown
      */
@@ -93,17 +130,56 @@ export default function Navbar({ setShowLogin, showDataEntry, currentAccount, on
 
                         {showDropdown  && (
                             <div className="navbar-dropdown">
-                                <button type="button" onClick={handleLogout}
-                                        className="navbar-dropdown-button">LOG OUT</button>
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    className="navbar-dropdown-button"
+                                >
+                                    LOG OUT
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowDeleteConfirm(true)}
+                                    className="navbar-dropdown-button navbar-dropdown-button-danger"
+                                >
+                                    DELETE ACCOUNT
+                                </button>
                             </div>
                         )}
                     </div>
+
                 ) : (
                     <button type="button"
                             onClick={handleLogin} className="navbar-button navbar-link">LOGIN</button>
                 )}
             </nav>
             <div id="login-container"></div>
+            {showDeleteConfirm && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{maxWidth: '400px'}}>
+                        <h2 className="modal-title">Delete Account?</h2>
+                        <p>
+                            This action cannot be undone. All your data will be permanently deleted.
+                        </p>
+                        <div className="form-buttons">
+                            <button
+                                onClick={handleDeleteAccount}
+                                className="btn-primary"
+                                disabled={deleting}
+                            >
+                                {deleting ? 'Deleting...' : 'Yes, Delete My Account'}
+                            </button>
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="btn-secondary"
+                                disabled={deleting}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

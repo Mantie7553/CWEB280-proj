@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {confirmAccount} from "../../controllers/account-controller.jsx";
+import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 
 /**
  * Modal for handling user authentication
@@ -15,6 +15,9 @@ export default function Login({isOpen, onClose, onSuccess}) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     if (!isOpen) return null;
 
@@ -25,51 +28,201 @@ export default function Login({isOpen, onClose, onSuccess}) {
     const handleClose = () => {
         setEmail('');
         setPassword('');
+        setIsRegistering(false);
+        setError('');
         onClose();
     }
 
-    /**
-     * Confirms that the entered credentials match one of the accounts stored
-     *  in the accountController
-     *  - if an ID that is not 0 is returned then the account must exist in the accountController
-     *  - calls the onSuccess function passed in from App.jsx
-     *  - else shows an alert that the email or password is not correct
-     * @param e the submit event
-     */
-    const handleSubmit = (e) => {
+    const handleLogin = (e) => {
         e.preventDefault();
-        let accountInfo = confirmAccount(email, password);
-        if (accountInfo.id !== 0) {
-            onSuccess(accountInfo);
-            handleClose();
+        setLoading(true);
+        setError('');
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/user/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error(resp.detail || 'Login failed')
+                }
+                return resp.json();
+            })
+            .then(data => {
+                onSuccess({
+                    id: data.userId,
+                    email: data.email
+                });
+                handleClose();
+            })
+            .catch((err) => {
+                setError(err.message || 'Login failed. Try again.')
+        })
+            .finally(() => {
+                setLoading(false);
+            })
+    }
+
+    const handleRegister = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters long');
+            setLoading(false);
+            return;
         }
-        else {
-            alert('Email or password is not correct');
-        }
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/user/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error(resp.detail || 'Registration failed')
+                }
+                return resp.json();
+            })
+            .then(data => {
+                onSuccess({
+                    id: data.userId,
+                    email: data.email
+                });
+                handleClose();
+            })
+            .catch((err) => {
+                setError(err.message || 'Registration failed. Try again.')
+            })
+            .finally(() => {
+                setLoading(false);
+            })
+
+    }
+
+    const handleGoogle = (credentialResp) => {
+        setLoading(true);
+        setError('');
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/user/google-login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                credential: credentialResp.credential
+            })
+        })
+            .then(resp => {
+                if (!resp.ok) {
+                    throw new Error('Google login failed')
+                }
+                return resp.json();
+            })
+            .then(data => {
+                onSuccess({
+                    id: data.userId,
+                    email: data.email
+                });
+                handleClose();
+            })
+            .catch((err) => {
+                setError(err.message || 'Google login failed. Try again.')
+            })
+            .finally(() => {
+                setLoading(false);
+            })
+    }
+
+    const googleErrorHandler = () => {
+        setError('Google Sign-In failed. Please try again.')
     }
 
     return (
         <div className="modal-overlay">
-            <form onSubmit={handleSubmit} className="modal-content">
+            <form onSubmit={isRegistering ? handleRegister : handleLogin} className="modal-content">
                 <button type="button" onClick={handleClose} className="modal-close">X</button>
-                <h1 className="modal-title">LOGIN</h1>
+                <h1 className="modal-title">{isRegistering ? 'CREATE ACCOUNT' : 'LOGIN'}</h1>
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
+                    <GoogleLogin
+                        onSuccess={handleGoogle}
+                        onError={googleErrorHandler}
+                    />
+                </GoogleOAuthProvider>
+                <p className="modal-info">OR</p>
+                {error && (
+                    <div className="modal-error">
+                        {error}
+                    </div>
+                )}
                 <div className="form-group">
                     <label className="form-label">Email</label>
                     <input type="email" required value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className='form-input'/>
+                           onChange={(e) => setEmail(e.target.value)}
+                           className='form-input'
+                           disabled={loading}
+                    />
                 </div>
 
                 <div className="form-group">
-                    <label className="form-label">Password</label>
+                    <label className="form-label">
+                        Password {isRegistering && '(min. 8 characters)'}
+                    </label>
                     <input type="password" required value={password}
                            onChange={(e) => setPassword(e.target.value)}
-                    className="form-input"/>
+                           className="form-input"
+                           disabled={loading}
+                           minLength={isRegistering ? 8 : undefined}
+                    />
                 </div>
 
                 <div className="form-buttons">
-                    <button type="submit" className="btn-primary">Login</button>
+                    <button type="submit" className="btn-primary" disabled={loading}>
+                        {loading ? 'Loading...' : (isRegistering ? 'Register' : 'Login')}
+                    </button>
                     <button type="button" onClick={handleClose} className="btn-secondary">Cancel</button>
+                </div>
+
+                <div>
+                    {isRegistering ? (
+                        <p>
+                            Already have an account?{' '}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsRegistering(false);
+                                    setError('');
+                                }}
+                            >
+                                Login here
+                            </button>
+                        </p>
+                    ) : (
+                        <p>
+                            Don't have an account?{' '}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsRegistering(true);
+                                    setError('');
+                                }}
+                            >
+                                Register here
+                            </button>
+                        </p>
+                    )}
                 </div>
             </form>
         </div>

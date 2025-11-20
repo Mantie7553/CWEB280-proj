@@ -46,8 +46,9 @@ class Series(Base):
 class User(Base):
     __tablename__ = "User"
     userId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
-    email = Column(sa.String(255), nullable=False)
-    password = Column(sa.String(255), nullable=False)
+    email = Column(sa.String(255), unique=True, index=True, nullable=False)
+    password = Column(sa.String(255), nullable=True)
+    googleId = Column(sa.String(255), nullable=True)
 
 
 engine = create_engine(app.config.DB_PATH, echo=True, future=True)

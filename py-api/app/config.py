@@ -1,3 +1,5 @@
+import os
+
 from dotenv import load_dotenv
 load_dotenv() #loads values from .env file if it exists !IMPORTANT .env files should NEVER be put on git
 
@@ -12,3 +14,5 @@ ALLOW_ORIGINS = [
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174", # Backup port
 ]
+
+GOOGLE_CLIENT_ID = "63922091158-ilin5g6q540ms6j8qcbs614qhcgq77jc.apps.googleusercontent.com"
