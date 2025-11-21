@@ -3,6 +3,7 @@ import TeamAdd from "../components/modals/TeamAdd.jsx";
 import DateInput from "../components/form-parts/DateInput.jsx";
 import Button from "../components/form-parts/Button.jsx";
 import CreateSeries from "../components/modals/CreateSeries.jsx";
+import {useLocation, useNavigate} from "react-router-dom";
 
 /**
  * Creates the Data Entry page, used to enter new data into the database
@@ -11,6 +12,9 @@ import CreateSeries from "../components/modals/CreateSeries.jsx";
  * @authors Mantie7553, Kinley6573
  */
 export default function DataEntry() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const [showTeamAdd, setShowTeamAdd] = useState(false);
     const [showCreateSeries, setShowCreateSeries] = useState(false);
     const [dateTime, setDateTime] = useState('');
@@ -38,7 +42,6 @@ export default function DataEntry() {
         if (location.state?.editGame) {
             const game = location.state.editGame;
             loadGameToEdit(game);
-            // Clear the state so it doesn't reload on refresh
             window.history.replaceState({}, document.title);
         }
     }, [location.state]);
@@ -159,7 +162,7 @@ export default function DataEntry() {
             ? `${import.meta.env.VITE_API_BASE_URL}/game/update/${editingGameId}`
             : `${import.meta.env.VITE_API_BASE_URL}/game/add`;
 
-        const method = isEditMode ? 'PUT' : 'POST'
+        const method = isEditMode ? 'PUT' : 'POST';
 
         fetch(url, {
             method: method,
@@ -218,87 +221,92 @@ export default function DataEntry() {
     };
 
     return (
-        <div className="data-entry-container">
-            <div className="border">
-                {isEditMode && (
-                    <div>
-                        <h3>Editing Game #{editingGameId}</h3>
-                        <Button onClick={handleClear} className="btn-primary" text="Cancel Edit / Create"/>
-                    </div>
-                )}
-                <DateInput label="Date" dateTime={dateTime} setDateTime={setDateTime} />
-                {/* map here to cut down on the amount of duplicate code */}
-                {sections.map((section, index) => {
-                    return (
-                        <div key={index} className="data-entry-section">
-                            <h2 className="data-entry-section-title">
-                                {section.title}
-                            </h2>
-                            <div className="data-entry-fields">
-                                <div className="data-entry-field">
-                                    <label className="data-entry-label">
-                                        Name
-                                    </label>
-                                    <select
-                                        value={section.teamId || ''}
-                                        className="data-entry-input"
-                                        onChange={(e) => {
-                                            const selectedId = parseInt(e.target.value);
-                                            const selectedTeam = section.teams.find(t => t.id === selectedId);
-                                            section.setTeamId(selectedId);
-                                            section.setTeamName(selectedTeam?.name || '');
-                                        }}
-                                        required
-                                    >
-                                        <option value="">Select a team</option>
-                                        {section.teams && section.teams.length > 0 ? (
-                                            section.teams.map(team => (
-                                                <option key={team.id} value={team.id}>
-                                                    {team.name}
-                                                </option>
-                                            ))
-                                        ) : (
-                                            <option disabled>Loading teams...</option>
-                                        )}
-                                    </select>
-                                    <Button onClick={() => setShowTeamAdd(true)}
-                                            className="btn-link" text="Don't see the team you need? Add one"/>
-                                </div>
+        <div className="data-entry-page">
+            <div className="data-entry-container">
+                <div className="border">
+                    {isEditMode && (
+                        <div>
+                            <h3>Editing Game #{editingGameId}</h3>
+                            <Button onClick={handleClear} className="btn-primary" text="Cancel Edit / Create"/>
+                        </div>
+                    )}
+                    <DateInput label="Date" dateTime={dateTime} setDateTime={setDateTime} />
+                    {/* map here to cut down on the amount of duplicate code */}
+                    {sections.map((section, index) => {
+                        return (
+                            <div key={index} className="data-entry-section">
+                                <h2 className="data-entry-section-title">
+                                    {section.title}
+                                </h2>
+                                <div className="data-entry-fields">
+                                    <div className="data-entry-field">
+                                        <label className="data-entry-label">
+                                            Name
+                                        </label>
+                                        <select
+                                            value={section.teamId || ''}
+                                            className="data-entry-input"
+                                            onChange={(e) => {
+                                                const selectedId = parseInt(e.target.value);
+                                                const selectedTeam = section.teams.find(t => t.id === selectedId);
+                                                section.setTeamId(selectedId);
+                                                section.setTeamName(selectedTeam?.name || '');
+                                            }}
+                                            required
+                                        >
+                                            <option value="">Select a team</option>
+                                            {section.teams && section.teams.length > 0 ? (
+                                                section.teams.map(team => (
+                                                    <option key={team.id} value={team.id}>
+                                                        {team.name}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option disabled>Loading teams...</option>
+                                            )}
+                                        </select>
+                                        <Button onClick={() => setShowTeamAdd(true)}
+                                                className="btn-link" text="Don't see the team you need? Add one"/>
+                                    </div>
 
-                                <div className="data-entry-field">
-                                    <label className="data-entry-label">
-                                        Score
-                                    </label>
-                                    <input
-                                        type="number"
-                                        value={section.score}
-                                        className="data-entry-input"
-                                        onChange={(e) => section.setScore(parseInt(e.target.value) || 0)}
-                                        placeholder={"0"}
-                                        required
-                                    />
+                                    <div className="data-entry-field">
+                                        <label className="data-entry-label">
+                                            Score
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={section.score}
+                                            className="data-entry-input"
+                                            onChange={(e) => section.setScore(parseInt(e.target.value) || 0)}
+                                            placeholder={"0"}
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })}
 
-                <div className="flex gap-6 justify-center">
-                    <Button onClick={handleSave} className="btn-primary" text={isEditMode ? "UPDATE GAME" : "SAVE GAME"}/>
-                    {isEditMode && (
-                        <Button onClick={handleDelete} className="btn-secondary" text="DELETE GAME"/>
-                    )}
-                    <Button onClick={handleClear} className="btn-secondary" text="CLEAR"/>
+                    <div className="flex gap-6 justify-center">
+                        <Button onClick={handleSave} className="btn-primary" text={isEditMode ? "UPDATE GAME" : "SAVE GAME"}/>
+                        {isEditMode && (
+                            <Button onClick={handleDelete} className="btn-secondary" text="DELETE GAME"/>
+                        )}
+                        <Button onClick={handleClear} className="btn-secondary" text="CLEAR"/>
+                    </div>
+                    {/* modal for adding a team */}
+                    <TeamAdd
+                        isOpen={showTeamAdd}
+                        onClose={() => setShowTeamAdd(false)}
+                        onSuccess={handleTeamAdded}
+                    />
                 </div>
-                {/* modal for adding a team */}
-                <TeamAdd
-                    isOpen={showTeamAdd}
-                    onClose={() => setShowTeamAdd(false)}
-                    onSuccess={handleTeamAdded}
-                />
             </div>
-
-            <Button onClick={() => setShowCreateSeries(true)} className="btn-primary" text="CREATE SERIES" />
+            <Button
+                onClick={() => setShowCreateSeries(true)}
+                className="btn-primary"
+                text="CREATE SERIES"
+            />
             <CreateSeries isOpen={showCreateSeries} onClose={() =>setShowCreateSeries(false)} />
         </div>
     )

@@ -147,7 +147,7 @@ def get_series_by_id(series_id: int):
         }
 
 
-def create_series(name: str, type: str, desc: str, start: date, end: date, game_ids: List[int] = None) -> int:
+def create_series(name: str, type: str, desc: str, start: date, end: date, game_ids: List[int] = None):
     """Create a new series and optionally add games to it"""
     with Session(engine) as session:
         # Create the series
@@ -170,6 +170,43 @@ def create_series(name: str, type: str, desc: str, start: date, end: date, game_
             add_games_to_series(series_id, game_ids, session)
 
         return series_id
+
+
+def update_series(series_id: int, name: str, type: str, desc: str, start: date, end: date):
+    """Update an existing series"""
+    with Session(engine) as session:
+        series = session.query(Series).filter(Series.seriesId == series_id).first()
+
+        if not series:
+            return False
+
+        # Update fields
+        series.seriesName = name
+        series.seriesType = type
+        series.description = desc
+        series.startDate = start
+        series.endDate = end
+
+        session.commit()
+        return True
+
+
+def delete_series(series_id: int):
+    """Delete a series and all its game associations"""
+    with Session(engine) as session:
+        series = session.query(Series).filter(Series.seriesId == series_id).first()
+
+        if not series:
+            return False
+
+        # Delete all associated SeriesGames entries (cascade should handle this, but being explicit)
+        session.query(SeriesGames).filter(SeriesGames.seriesId == series_id).delete()
+
+        # Delete the series
+        session.delete(series)
+        session.commit()
+
+        return True
 
 
 def add_games_to_series(series_id: int, game_ids: List[int], session: Session = None):
@@ -206,3 +243,20 @@ def add_games_to_series(series_id: int, game_ids: List[int], session: Session = 
     finally:
         if close_session:
             session.close()
+
+
+def remove_game_from_series(series_id: int, game_id: int):
+    """Remove a game from a series"""
+    with Session(engine) as session:
+        series_game = session.query(SeriesGames).filter(
+            SeriesGames.seriesId == series_id,
+            SeriesGames.gameId == game_id
+        ).first()
+
+        if not series_game:
+            return False
+
+        session.delete(series_game)
+        session.commit()
+
+        return True

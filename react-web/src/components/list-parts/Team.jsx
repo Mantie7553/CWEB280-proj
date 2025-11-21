@@ -8,9 +8,19 @@
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function Team({team}) {
+export default function Team({team, onClick, clickable = false}) {
+
+    const handleCardClick = () => {
+        if (clickable && onClick) {
+            onClick(team);
+        }
+    }
+
     return (
-        <div className="team-card">
+        <div className="team-card"
+             onClick={handleCardClick}
+             style={clickable ? {cursor: 'pointer'} : {} }
+        >
             <img
                 src={team.logoFName ? `/public/uploads/${team.logoFName}` : '/NBA-Logo.png'}
                 alt={`${team.name}-logo`}

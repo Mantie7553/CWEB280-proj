@@ -21,33 +21,28 @@ export default function SeriesHeader({series, onEdit, onAddGames}) {
     }
 
     return (
-        <>
-            <div>
-                <h1>SERIES TITLE</h1>
-                <p>{series.title}</p>
+        <div className="series-header">
+            <h1 className="series-title">{series.name || 'SERIES TITLE'}</h1>
+            <h4 className="series-desc">{series.description || ''}</h4>
+            <div className="series-text">
                 <div>
-                    <div>
-                        <p>SERIES TYPE</p>
-                        <p>{series.type}</p>
-                    </div>
-                    <div>
-                        <p>TOTAL GAMES</p>
-                        <p>{series.totalGames || 0}</p>
-                    </div>
-                    <div>
-                        <p>DATES</p>
-                        <p>{series.start} to {series.end}</p>
-                    </div>
-                    <div>
-                        <p>STATUS</p>
-                        <p>{status}</p>
-                    </div>
+                    <p>{series.type || 'SERIES TYPE'}</p>
                 </div>
                 <div>
-                    <Button onClick={onEdit} className="btn-secondary" text="EDIT"/>
-                    <Button onClick={onAddGames} className="btn-secondary" text="ADD GAMES"/>
+                    <p>{`TOTAL GAMES: ${series.totalGames}` || 'NO GAMES'}</p>
+                </div>
+                <div>
+                    <p>{`${series.start} TO ${series.end}` || 'NO DATE'}</p>
+                    <p></p>
+                </div>
+                <div>
+                    <p>{status || 'UNKNOWN'}</p>
                 </div>
             </div>
-        </>
+            <div className="series-buttons">
+                <Button onClick={onEdit} className="btn-secondary" text="EDIT"/>
+                <Button onClick={onAddGames} className="btn-secondary" text="ADD GAMES"/>
+            </div>
+        </div>
     )
 }

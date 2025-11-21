@@ -1,0 +1,19 @@
+.series-header {
+    @apply bg-[#17408B] px-8 py-4 border-b-4 border-[#C9082A];
+}
+
+.series-title {
+    @apply text-5xl font-bold mb-4;
+}
+
+.series-desc {
+    @apply text-2xl font-semibold px-5;
+}
+
+.series-text {
+    @apply flex justify-between text-xl font-semibold px-10 py-5;
+}
+
+.series-buttons {
+    @apply flex pl-5 space-x-15;
+}

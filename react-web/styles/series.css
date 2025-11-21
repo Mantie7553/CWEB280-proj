@@ -1,0 +1,12 @@
+.series-card {
+    @apply cursor-pointer grid grid-cols-[1fr_1fr] items-end
+    gap-2 bg-[#17408B] px-6 border-t-10 border-[#C9082A];
+}
+
+.series-text {
+    @apply font-semibold text-lg py-3;
+}
+
+.series-text-lg {
+    @apply font-bold text-xl pl-10 py-2;
+}

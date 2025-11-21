@@ -1,14 +1,14 @@
 
-export default function DateInput(props) {
+export default function DateInput({label, dateTime, setDateTime}) {
     return (
         <div className="data-entry-datetime">
-            <label className="data-entry-label">
-                {props.label}
+            <label className="form-label">
+                {label}
             </label>
             <input
                 type="date"
-                value={props.dateTime}
-                onChange={(e) => props.setDateTime(e.target.value)}
+                value={dateTime}
+                onChange={(e) => setDateTime(e.target.value)}
                 className="data-entry-input"
                 required
             />

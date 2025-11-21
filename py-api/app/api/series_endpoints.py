@@ -4,8 +4,8 @@ from fastapi import APIRouter, Query, HTTPException
 from pydantic import BaseModel
 from datetime import date
 
-from app.services.series_service import paged_series, create_series, add_games_to_series, get_series_by_id
-
+from app.services.series_service import paged_series, create_series, add_games_to_series, get_series_by_id, \
+    delete_series, remove_game_from_series, update_series
 
 router = APIRouter(prefix="/api/series", tags=["api"])
 
@@ -17,6 +17,14 @@ class CreateSeriesRequest(BaseModel):
     start: date
     end: date
     games: List[int] = []
+
+
+class UpdateSeriesRequest(BaseModel):
+    name: str
+    type: str
+    desc: str
+    start: date
+    end: date
 
 
 class AddGamesRequest(BaseModel):
@@ -52,10 +60,53 @@ async def create_new_series(request: CreateSeriesRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.put("/{series_id}")
+async def update_existing_series(series_id: int, request: UpdateSeriesRequest):
+    """Update an existing series"""
+    try:
+        updated = update_series(
+            series_id=series_id,
+            name=request.name,
+            type=request.type,
+            desc=request.desc,
+            start=request.start,
+            end=request.end
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail="Series not found")
+        return {"success": True, "message": "Series updated successfully", "seriesId": series_id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/{series_id}")
+async def delete_existing_series(series_id: int):
+    """Delete a series and all its game associations"""
+    try:
+        deleted = delete_series(series_id)
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Series not found")
+        return {"success": True, "message": "Series deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @router.post("/{series_id}/games")
 async def add_games(series_id: int, request: AddGamesRequest):
     try:
         add_games_to_series(series_id, request.gameIds)
         return {"success": True, "message": f"Added {len(request.gameIds)} games to series"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/{series_id}/games/{game_id}")
+async def remove_game(series_id: int, game_id: int):
+    """Remove a game from a series"""
+    try:
+        removed = remove_game_from_series(series_id, game_id)
+        if not removed:
+            raise HTTPException(status_code=404, detail="Game not found in series")
+        return {"success": True, "message": "Game removed from series"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

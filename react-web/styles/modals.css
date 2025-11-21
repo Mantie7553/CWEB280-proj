@@ -59,12 +59,12 @@
 }
 
 .form-label {
-    @apply block text-[#17408B] font-semibold mb-2;
+    @apply block text-black font-bold mb-2;
 }
 
 .form-input,
 .form-select {
-    @apply w-full px-3 py-3 border-2 border-[#17408B] rounded text-black focus:outline-none focus:border-[#C9082A];
+    @apply w-full px-3 py-3 border-2 border-black rounded text-black focus:outline-none focus:border-[#C9082A];
 }
 
 .form-buttons {

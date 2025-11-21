@@ -11,6 +11,8 @@
 @import "./game.css";
 @import "./pages.css";
 @import "./data-entry.css";
+@import "./seriesheader.css";
+@import "./series.css";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

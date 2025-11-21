@@ -5,6 +5,9 @@ import Game from "./Game.jsx";
 import EmptyGame from "./EmptyGame.jsx";
 import EmptyTeam from "./EmptyTeam.jsx";
 import {useNavigate} from "react-router-dom";
+import TeamAdd from "../modals/TeamAdd.jsx";
+import CreateSeries from "../modals/CreateSeries.jsx";
+import Series from "./Series.jsx";
 
 /**
  * A React component that lists a number of Team or Game objects
@@ -28,8 +31,12 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [showTeamModal, setShowTeamModal] = useState(false);
+    const [editingTeam, setEditingTeam] = useState(null);
+    const [showSeriesModal, setShowSeriesModal] = useState(false);
+    const [editingSeries, setEditingSeries] = useState(null);
 
-    const showHeader = ['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
+    const showHeader = !['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
     const showPagination = ['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
 
     /**
@@ -121,9 +128,109 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
         fetchList()
     }, [sectionName, currentPage]);
 
+    /**
+     * Generic re-fetch function
+     */
+    const fetchData = () => {
+        setLoading(true);
+        setError(null);
+
+        let url = '';
+        if (sectionName === 'TOP TEAMS') {
+            url = `${import.meta.env.VITE_API_BASE_URL}/team/top`;
+        } else if (sectionName === 'TEAMS') {
+            url = `${import.meta.env.VITE_API_BASE_URL}/team/stats/${currentPage}`;
+        } else if (sectionName === 'SERIES') {
+            url = `${import.meta.env.VITE_API_BASE_URL}/series/${currentPage}`;
+        } else if (sectionName === 'FEATURED SERIES') {
+            url = `${import.meta.env.VITE_API_BASE_URL}/series/1?filter=featured`;
+        }
+
+        if (url) {
+            fetch(url)
+                .then((resp) => {
+                    if (!resp.ok) throw new Error("Unknown Error");
+                    return resp.json();
+                })
+                .then((data) => {
+                    if (data.teams) {
+                        let teams = [...data.teams];
+                        if (sectionName === 'TEAMS') {
+                            while (teams.length < 5) {
+                                teams.push(null);
+                            }
+                        }
+                        setInfo(teams);
+                    } else if (data.series) {
+                        let series = [...data.series];
+                        if (sectionName === 'SERIES') {
+                            while (series.length < 5) {
+                                series.push(null);
+                            }
+                        }
+                        if (sectionName === 'FEATURED SERIES') {
+                            series = series.slice(0, 3);
+                        }
+                        setInfo(series);
+                    }
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    setError(err.message);
+                    setLoading(false);
+                });
+        }
+    };
+
     const handleSeriesClick = (seriesId) => {
-        navigate(`/series/${seriesId}`);
+        if (sectionName === 'SERIES') {
+            // On SERIES list, clicking opens edit modal
+            fetchSeriesForEdit(seriesId);
+        } else {
+            // FEATURED SERIES navigates to detail page
+            navigate(`/series/${seriesId}`);
+        }
     }
+
+    /**
+     * Handle clicking on a game to edit it
+     */
+    const handleGameClick = (game) => {
+        // Navigate to DataEntry with the game data
+        navigate('/data-entry', { state: { editGame: game } });
+    }
+
+    /**
+     * Handle clicking on a team to edit it
+     */
+    const handleTeamClick = (team) => {
+        setEditingTeam(team);
+        setShowTeamModal(true);
+    }
+
+    /**
+     * Refresh any team / series list after successful edit
+     */
+    const onSuccess = () => {
+        fetchData();
+    };
+
+    /**
+     * Fetch series data for editing
+     */
+    const fetchSeriesForEdit = async (seriesId) => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL}/series/detail/${seriesId}`
+            );
+            const data = await response.json();
+            setEditingSeries(data);
+            setShowSeriesModal(true);
+        } catch (error) {
+            console.error('Error fetching series:', error);
+            alert('Failed to load series for editing');
+        }
+    };
 
     /**
      * Displays a list while data is being fetched from the database
@@ -231,18 +338,18 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
                 }
 
                 if (sectionName === 'TOP TEAMS' || sectionName === 'TEAMS') {
-                    return <Team key={item.id || index} team={item}/>
+                    return <Team
+                        key={item.id || index}
+                        team={item}
+                        clickable={sectionName === 'TEAMS'}
+                        onClick={sectionName === 'TEAMS' ? handleTeamClick : undefined}
+                    />
                 } else  if (sectionName === 'SERIES' || sectionName === 'FEATURED SERIES') {
                     return (
-                        <div key={item.id || index}
-                        onClick={() => handleSeriesClick(item.id)}
-                        style={{cursor: 'pointer'}}>
-                            <h3>{item.name}</h3>
-                            <p>Type: {item.type}</p>
-                            <p>{item.description}</p>
-                            <p>{item.start} to {item.end}</p>
-                            <p>Games: {item.totalGames}</p>
-                        </div>
+                        <Series
+                            series={item}
+                            handleSeriesClick={handleSeriesClick}
+                        />
                     )
                 } else {
                     return <Game
@@ -251,6 +358,8 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
                         canSelect={canSelect}
                         isSelected={selectedGames && selectedGames.includes(item.id)}
                         onSelect={handleGameSelect}
+                        clickable={sectionName === 'GAMES'}
+                        onClick={sectionName === 'GAMES' ? handleGameClick : undefined}
                     />
                 }
             })}
@@ -261,6 +370,26 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
                     totalPages={totalPages}
                 />
             )}
+
+            <TeamAdd
+                isOpen={showTeamModal}
+                onClose={() => {
+                    setShowTeamModal(false);
+                    setEditingTeam(null);
+                }}
+                onSuccess={onSuccess}
+                editTeam={editingTeam}
+            />
+
+            <CreateSeries
+                isOpen={showSeriesModal}
+                onClose={() => {
+                    setShowSeriesModal(false);
+                    setEditingSeries(null);
+                }}
+                onSuccess={onSuccess}
+                editSeries={editingSeries}
+            />
         </div>
     )
 }

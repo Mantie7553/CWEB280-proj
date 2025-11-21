@@ -26,14 +26,13 @@ export default function TeamAdd({isOpen, onClose, onSuccess, editTeam = null}) {
         if (editTeam) {
             setIsEditMode(true);
             setTeamName(editTeam.name);
-            setLogoFile(null);
-            setKeepExistingLogo(true);
         } else {
             setIsEditMode(false);
             setTeamName('');
-            setLogoFile(null);
-            setKeepExistingLogo(true);
         }
+        setLogoFile(null);
+        setLogoPreview('');
+        setKeepExistingLogo(true);
     }, [editTeam]);
 
     /**
@@ -212,8 +211,17 @@ export default function TeamAdd({isOpen, onClose, onSuccess, editTeam = null}) {
                         </p>
                     </div>
                     {isEditMode && editTeam.logoFName && keepExistingLogo && !logoFile && (
-                        <div className="text-sm text-gray-600 mt-1">
-                            Current logo will be kept. Upload a new file to replace it.
+                        <div className="mb-4">
+                            <label className="block mb-2 font-semibold">Current Logo:</label>
+                            <img
+                                src={`/public/uploads/${editTeam.logoFName}`}
+                                alt={`${editTeam.name} logo`}
+                                style={{maxWidth: '200px', maxHeight: '200px'}}
+                                className="border rounded"
+                            />
+                            <p className="text-sm text-gray-600 mt-2">
+                                Upload a new file to replace this logo, or keep the existing file.
+                            </p>
                         </div>
                     )}
                     {logoPreview && (
@@ -230,9 +238,8 @@ export default function TeamAdd({isOpen, onClose, onSuccess, editTeam = null}) {
                             onClick={handleSubmit}
                             className="btn-primary"
                             disabled={isUploading}
-                        >
-                            {isEditMode ? 'UPDATE TEAM' : 'ADD TEAM'}
-                        </Button>
+                            text={isEditMode ? 'UPDATE TEAM' : 'ADD TEAM'}
+                        />
                         <Button onClick={handleDelete}
                                 className="btn-secondary" text="DELETE TEAM"/>
                         <button

@@ -3,7 +3,7 @@
     Authors: Mantie7553, Kinley6573
 */
 .data-entry-container {
-    @apply p-20 max-w-4xl mx-auto rounded-2xl bg-white;
+    @apply p-20 max-w-4xl rounded-2xl bg-white;
 }
 
 .data-entry-datetime {
@@ -36,4 +36,8 @@
 
 .data-entry-actions {
     @apply flex gap-6 justify-center mt-12;
+}
+
+.data-entry-page {
+    @apply flex justify-center items-start gap-10 px-10 py-10;
 }

@@ -14,7 +14,7 @@ import Button from "../form-parts/Button.jsx";
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function Game({game, canSelect, isSelected, onSelect}) {
+export default function Game({game, canSelect, isSelected, onSelect, onClick, clickable = false}) {
 
     const awayTeam = game.awayTeam;
     const homeTeam = game.homeTeam;
@@ -22,14 +22,24 @@ export default function Game({game, canSelect, isSelected, onSelect}) {
     const includesStats = homeTeam.winRate !== undefined || awayTeam.winRate !== undefined;
     const hasScores = game.awayScore !== 0 || game.homeScore !== 0;
 
-    const handleSelectClick = () => {
+    const handleSelectClick = (e) => {
+        e.stopPropagation();
         if (onSelect) {
             onSelect(game.id);
         }
     }
 
+    const handleCardClick = () => {
+        if (clickable && onClick) {
+            onClick(game);
+        }
+    }
+
     return (
-        <div className="game-card">
+        <div className="game-card"
+             onClick={handleCardClick}
+             style={clickable ? {cursor: 'pointer'} : {} }
+        >
             {canSelect && (
                 <div>
                     <Button onClick={handleSelectClick}

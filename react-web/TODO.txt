@@ -1,6 +1,3 @@
 Next steps
--   Add functionality to all new buttons
--   Delete and update functionality
+-   Fix games shown when displaying a series
 -   Testing
--   fix all displays
--
