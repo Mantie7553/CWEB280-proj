@@ -150,7 +150,12 @@ export default function Navbar({ setShowLogin, showDataEntry, currentAccount, on
 
                 ) : (
                     <button type="button"
-                            onClick={handleLogin} className="navbar-button navbar-link">LOGIN</button>
+                            onClick={handleLogin}
+                            className="navbar-button navbar-link"
+                            data-cy="btn-login"
+                    >
+                        LOGIN
+                    </button>
                 )}
             </nav>
             <div id="login-container"></div>

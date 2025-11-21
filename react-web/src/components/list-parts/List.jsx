@@ -320,7 +320,11 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
      *  Any empty positions will be filled with placeholder values
      */
     return (
-        <div className={sectionName === 'game' ? 'list-section-game' : 'list-section-team'}>
+        <div className={sectionName === 'GAMES'
+        || sectionName === 'UPCOMING'
+        || sectionName === 'RECENT'
+            ? 'list-section-game'
+            : 'list-section-team'}>
             {showHeader && (
                 <h2 className="list-header">{sectionName}</h2>
             )}

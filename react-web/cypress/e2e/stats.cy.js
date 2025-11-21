@@ -5,83 +5,85 @@ describe('Tests for the Stats page of the application', () => {
         cy.viewport(1920,1080);
     });
 
-    it('both lists are displayed', () => {
+    it('all lists are displayed', () => {
         cy.get('.list-section-team').should('exist');
-        cy.contains('.list-header', 'GAMES').should('be.visible');
-        cy.contains('.list-header', 'TEAMS').should('be.visible');
+        cy.get('.list-section-game').should('exist');
+
+        cy.get('.list-header-collapsible').first().should('contain.text', 'GAMES');
+        cy.get('.list-header-collapsible').eq(1).should('contain.text', 'TEAMS');
+        cy.get('.list-header-collapsible').eq(2).should('contain.text', 'SERIES');
     });
 
     it('Teams list displays appropriate data', () => {
-        cy.contains('.list-header', 'TEAMS').parent()
+        cy.get('.list-header-collapsible').eq(1).parent()
             .within(() => {
                 cy.get('.team-name').should('be.visible');
-                cy.contains('.team-stat-label', 'AVG POINTS').should('exist');
-                cy.contains('.team-stat-label', 'AVG DIFF').should('exist');
-                cy.contains('.team-stat-label', 'WIN RATE').should('exist');
+                cy.get('.team-stat-label').first().should('contain.text' , 'AVG POINTS');
+                cy.get('.team-stat-label').eq(1).should('contain.text' , 'AVG DIFF');
+                cy.get('.team-stat-label').eq(2).should('contain.text' , 'WIN RATE');
             })
     });
 
     it('both lists show at most 5 items per page', () => {
-        cy.contains('.list-header', 'TEAMS').parent()
+        cy.get('.list-header-collapsible').eq(1).parent()
             .within(() => {
                 cy.get('.team-card').should('have.length', 5);
             })
-        cy.contains('.list-header', 'GAMES').parent()
+        cy.get('.list-header-collapsible').first().parent()
             .within(() => {
                 cy.get('.game-card').should('have.length', 5);
             })
     });
 
-    it('win rate is shown as a percentage', () => {
-        cy.contains('.list-header', 'TEAMS').parent()
-            .within(() => {
-                cy.contains('.team-stat-label', 'WIN RATE').parent()
-                    .find('.team-stat-value').invoke('text')
-                    .should('match', /^\d+\.\d%$/);
-            })
+    it('win rate is shown as a decimal', () => {
+        cy.get('.game-card').first().within(() => {
+            cy.get('.game-stat-label').eq(2).parent()
+                .find('.game-stat-value').invoke('text')
+                .should('match', /^-?\d+\.?\d*$/);
+        })
     });
 
     it('average points is shown as a decimal', () => {
-        cy.contains('.list-header', 'TEAMS').parent()
-            .within(() => {
-                cy.contains('.team-stat-label', 'AVG POINTS').parent()
-                    .find('.team-stat-value').invoke('text')
-                    .should('match', /^\d+(\.\d+)?$/);
+        cy.get('.team-card').first().within(() => {
+            cy.get('.team-stat-label').first().parent()
+                .find('.team-stat-value').invoke('text')
+                .should('match', /^-?\d+\.?\d*$/);
+        })
+    });
+
+    it('Games list displays appropriate data', () => {
+        cy.get('.game-card').first().within(() => {
+            cy.get('.game-stats-info').should('be.visible');
+            cy.get('.game-stat-label').first().should('contain.text', 'WIN RATE');
+            cy.get('.game-stat-label').eq(1).should('contain.text', 'AVG POINTS');
+            cy.get('.game-stat-label').eq(2).should('contain.text', 'AVG DIFF');
             })
     });
 
-    it('Teams list displays appropriate data', () => {
-        cy.contains('.list-header', 'GAMES').parent()
-            .within(() => {
-                cy.get('.game-stats-info').should('be.visible');
-                cy.contains('.game-stat-label', 'AVG POINTS').should('exist');
-                cy.contains('.game-stat-label', 'AVG DIFF').should('exist');
-                cy.contains('.game-stat-label', 'WIN RATE').should('exist');
+    it('pagination is displayed for all lists', () => {
+        cy.get('.list-section-team').first().within(() => {
+                cy.get('.pagination').should('exist').and('be.visible');
+                cy.get('.pagination-button').should('exist');
             })
-    });
 
-    it('pagination is displayed for both lists', () => {
-        cy.contains('.list-header', 'TEAMS').parent()
-            .within(() => {
+        cy.get('.list-section-game').within(() => {
                 cy.get('.pagination').should('exist').and('be.visible');
                 cy.get('.pagination-button').should('exist');
             })
-        cy.contains('.list-header', 'GAMES').parent()
-            .within(() => {
-                cy.get('.pagination').should('exist').and('be.visible');
-                cy.get('.pagination-button').should('exist');
-            })
+
+        cy.get('.list-section-team').eq(1).within(() => {
+            cy.get('.pagination').should('exist').and('be.visible');
+            cy.get('.pagination-button').should('exist');
+        })
     });
 
     it('navigates to next page of games', () => {
-        cy.contains('.list-header', 'GAMES')
-            .parent()
-            .within(() => {
+        cy.get('.list-section-game').within(() => {
                 cy.get('.game-card').first()
                     .invoke('text')
                     .as('firstGamePage');
 
-                cy.contains('.pagination-button', 'Next').click();
+                cy.get('.pagination-button').last().click();
 
                 cy.get('.game-card', { timeout: 500 }).should('exist');
 
@@ -96,13 +98,11 @@ describe('Tests for the Stats page of the application', () => {
     });
 
     it('navigates to previous page of games', () => {
-        cy.contains('.list-header', 'GAMES')
-            .parent()
-            .within(() => {
-                cy.contains('.pagination-button', 'Next').click();
+        cy.get('.list-section-game').within(() => {
+                cy.get('.pagination-button').last().click();
                 cy.wait(500);
 
-                cy.contains('.pagination-button', 'Previous').click();
+                cy.get('.pagination-button').first().click();
                 cy.wait(500);
 
                 cy.get('.pagination-button.active').should('contain', '1');
@@ -110,11 +110,8 @@ describe('Tests for the Stats page of the application', () => {
     });
 
     it('disables Previous button on first page', () => {
-        cy.contains('.list-header', 'GAMES')
-            .parent()
-            .within(() => {
-                cy.contains('.pagination-button', 'Previous')
-                    .should('be.disabled');
+        cy.get('.list-section-game').within(() => {
+            cy.get('.pagination-button').first().should('be.disabled');
             });
     });
 })

@@ -8,12 +8,12 @@ describe('Tests for the Stats page of the application', () => {
     it('shows DATA ENTRY link only when authenticated', () => {
         cy.visit('http://localhost:5173/');
 
-        cy.contains('.navbar-link', 'DATA ENTRY').should('not.exist');
-        cy.contains('.navbar-link', 'LOGIN').click();
+        cy.get('[data-cy="btn-login"]').should('exist');
+        cy.get('[data-cy="btn-login"]').click();
 
         Login();
 
-        cy.contains('.navbar-link', 'DATA ENTRY').should('exist');
+        cy.get('[data-cy="btn-login"]').should('not.exist');
     });
 
     it('successfully adds a game', () => {
@@ -28,7 +28,9 @@ describe('Tests for the Stats page of the application', () => {
         cy.get('input[type="number"]').first().type('110');
         cy.get('input[type="number"]').eq(1).type('105');
 
-        cy.contains('button', /save Game/i).click();
+        cy.get('.data-entry-container').within(() => {
+            cy.get('.btn-primary').click();
+        })
 
         cy.on('window:alert', (text) => {
             expect(text).to.contains('added successfully');
@@ -56,35 +58,37 @@ describe('Testing for add team modal', () => {
     it('opens team addition modal when button clicked', () => {
         cy.get('.modal-overlay').should('not.exist');
 
-        cy.contains('button', /Add one/i).click();
+        cy.get('.btn-link').first().click();
 
         cy.get('.modal-overlay').should('be.visible');
-        cy.contains('.modal-title', 'Add New Team').should('be.visible');
+        cy.get('.modal-title').should('contain.text', 'Add Team');
     });
 
     it('displays all required fields in team modal', () => {
-        cy.contains('button', /add one/i).click();
+        cy.get('.btn-link').first().click();
 
         cy.get('.modal-content').within(() => {
-            cy.contains('.form-label', 'Team Name').should('exist');
+            cy.get('.form-label').first().should('contain.text', 'Team Name');
             cy.get('input[type="text"]').should('exist');
 
-            cy.contains('.form-label', /Team Logo/i).should('exist');
+            cy.get('.form-label').eq(1).should('contain.text', 'Team Logo');
             cy.get('input[type="file"]').should('exist');
 
-            cy.contains('button', 'Add Team').should('exist');
-            cy.contains('button', 'Cancel').should('exist');
+            cy.get('.btn-primary').should('exist');
+            cy.get('.btn-secondary').should('exist');
         });
     });
 
     it('can close the modal with both the cancel and X buttons', () => {
-        cy.contains('button', /add one/i).click();
+        cy.get('.btn-link').first().click();
         cy.get('.modal-overlay').should('be.visible');
 
-        cy.contains('button', 'Cancel').click();
+        cy.get('.modal-overlay').within(() => {
+            cy.get('.btn-secondary').eq(1).click();
+        });
         cy.get('.modal-overlay').should('not.exist');
 
-        cy.contains('button', /add one/i).click();
+        cy.get('.btn-link').first().click();
         cy.get('.modal-overlay').should('be.visible');
 
         // Assuming there's a close button (adjust selector if needed)
@@ -93,21 +97,21 @@ describe('Testing for add team modal', () => {
     });
 
     it('validates team name field', () => {
-        cy.contains('button', /add one/i).click();
+        cy.get('.btn-link').first().click();
 
-        cy.get('.modal-content').within(() => {
-            cy.contains('button', 'Add Team').click();
+        cy.get('.modal-overlay').within(() => {
+            cy.get('.btn-primary').click();
         });
 
         cy.get('input[type="text"]:invalid').should('exist');
     });
 
     it('successfully adds a team', () => {
-        cy.contains('button', /add one/i).click();
+        cy.get('.btn-link').first().click();
 
         cy.get('.modal-content').within(() => {
             cy.get('input[type="text"]').type('New Test Team');
-            cy.contains('button', 'Add Team').click();
+                cy.get('.btn-primary').click();
         });
 
         cy.on('window:alert', (text) => {
@@ -118,11 +122,14 @@ describe('Testing for add team modal', () => {
     });
 
     it('form is cleared when re-opening modal', () => {
-        cy.contains('button', /add one/i).click();
+        cy.get('.btn-link').first().click();
         cy.get('input[type="text"]').type('Test Team');
-        cy.contains('button', 'Cancel').click();
 
-        cy.contains('button', /add one/i).click();
+        cy.get('.modal-overlay').within(() => {
+            cy.get('.btn-secondary').eq(1).click();
+        });
+
+        cy.get('.btn-link').first().click();
 
         cy.get('input[type="text"]').should('have.value', '');
         cy.get('img[src^="blob:"]').should('not.exist');

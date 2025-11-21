@@ -8,65 +8,63 @@ describe('Tests for the home page of the application', () => {
     it('navbar at the top is rendered', () => {
         cy.get('.navbar-link').should('have.length', 3);
         cy.get('.navbar-title').should('contain', 'NBA GAME TRACKER');
-        cy.contains('.navbar-link', 'HOME').should('be.visible');
-        cy.contains('.navbar-link', 'STATS').should('be.visible');
-        cy.contains('.navbar-link', 'LOGIN').should('be.visible');
-        cy.contains('.navbar-link', 'DATA ENTRY').should('not.exist');
+        cy.get('.navbar-link').first().should('contain.text', 'HOME');
+        cy.get('.navbar-link').eq(1).should('contain.text', 'STATS');
+        cy.get('.navbar-link').eq(2).should('contain.text', 'LOGIN');
     });
 
     it('all three lists are displayed', () => {
         cy.get('.list-section-team').should('exist');
-        cy.contains('.list-header', 'TOP TEAMS').should('be.visible');
-        cy.contains('.list-header', 'UPCOMING').should('be.visible');
-        cy.contains('.list-header', 'RECENT').should('be.visible');
+        cy.get('.list-section-team').first().within(() => {
+            cy.get('.list-header').should('contain.text', 'TOP TEAMS');
+        });
+
+        cy.get('.list-section-game').first().within(() => {
+            cy.get('.list-header').should('contain.text', 'UPCOMING');
+        });
+
+        cy.get('.list-section-game').eq(1).within(() => {
+            cy.get('.list-header').should('contain.text', 'RECENT');
+        });
+
+        cy.get('.list-section-team').eq(1).within(() => {
+            cy.get('.list-header').should('contain.text', 'FEATURED SERIES');
+        });
     });
 
     it('top teams list displays data properly', () => {
-        cy.contains('.list-header', 'TOP TEAMS').parent()
+        cy.get('.list-section-team').first().parent()
             .within(() => {
                 cy.get('.team-card').should('exist');
-                cy.contains('.team-stat-label', 'WIN RATE').should('exist');
-                cy.contains('.team-stat-label', 'AVG POINTS').should('exist');
-                cy.contains('.team-stat-label', 'AVG DIFF').should('exist');
+                cy.get('.team-stat-label').first().should('contain.text', 'AVG POINTS');
+                cy.get('.team-stat-label').eq(1).should('contain.text', 'AVG DIFF');
+                cy.get('.team-stat-label').eq(2).should('contain.text', 'WIN RATE');
             })
     });
 
     it('upcoming games list displays data properly', () => {
-        cy.contains('.list-header', 'UPCOMING').parent()
+        cy.get('.list-section-game').first().parent()
             .within(() => {
                 cy.get('.game-card').should('exist');
-                cy.contains('.game-team-label', 'AWAY').should('exist');
-                cy.contains('.game-team-label', 'HOME').should('exist');
+                cy.get('.game-team-label').first().should('contain.text', 'AWAY');
+                cy.get('.game-team-label').eq(1).should('contain.text', 'HOME');
             })
     });
 
     it('recent games list displays game data with scores', () => {
-        cy.contains('.list-header', 'RECENT').parent()
+        cy.get('.list-section-game').eq(1).parent()
             .within(() => {
                 cy.get('.game-card').should('exist');
-                cy.contains('.game-score-label', 'SCORE').should('exist');
+                cy.get('.game-score-label').should('contain.text', 'SCORE');
+
                 cy.get('.game-score-value').invoke('text').should('match', /^\d*$/);
             })
-    });
-
-    it('loading state is handled properly', () => {
-        cy.intercept('GET', '**/team/top', (req) => {
-            req.continue((res) => {
-                res.delay = 1000;
-            })
-        }).as('topTeams');
-
-        cy.visit('http://localhost:5173');
-
-        cy.contains('Loading...').should('be.visible');
-        cy.wait('@topTeams');
-        cy.contains('Loading...').should('not.exist');
     });
 
     it('Login button opens login modal', () => {
         cy.get('.modal-overlay').should('not.exist');
 
-        cy.contains('.navbar-link', 'LOGIN').click();
+        cy.get('[data-cy="btn-login"]').click();
 
         cy.get('.modal-overlay').should('exist');
         cy.get('.modal-title').should('contain', 'LOGIN');

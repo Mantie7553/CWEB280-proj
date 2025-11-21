@@ -288,7 +288,11 @@ export default function DataEntry() {
                     })}
 
                     <div className="flex gap-6 justify-center">
-                        <Button onClick={handleSave} className="btn-primary" text={isEditMode ? "UPDATE GAME" : "SAVE GAME"}/>
+                        <Button
+                            onClick={handleSave}
+                            className="btn-primary"
+                            text={isEditMode ? "UPDATE GAME" : "SAVE GAME"}
+                        />
                         {isEditMode && (
                             <Button onClick={handleDelete} className="btn-secondary" text="DELETE GAME"/>
                         )}
