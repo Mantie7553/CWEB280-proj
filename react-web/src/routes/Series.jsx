@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import AddSeriesGames from "../components/modals/AddSeriesGames.jsx";
 import CreateSeries from "../components/modals/CreateSeries.jsx";
 
-export default function Series() {
+export default function Series({currentAccount}) {
     const {seriesId} = useParams();
     const {navigate} = useNavigate();
 
@@ -16,10 +16,16 @@ export default function Series() {
     const [showAddGames, setShowAddGames] = useState(false);
     const [showEditSeries, setShowEditSeries] = useState(false);
 
+    /**
+     * Gets series data on load
+     */
     useEffect(() => {
         fetchSeriesData();
     }, [seriesId]);
 
+    /**
+     * function for getting data for a specific series
+      */
     const fetchSeriesData = async () => {
         setLoading(true);
         setError(null);
@@ -45,14 +51,23 @@ export default function Series() {
         }
     };
 
+    /**
+     * Opens the modal for editing a series
+     */
     const handleEdit = () => {
         setShowEditSeries(true);
     };
 
+    /**
+     * Opens modal for adding games to a series
+     */
     const handleAddGames = () => {
         setShowAddGames(true);
     };
 
+    /**
+     *
+     */
     const handleGamesAdded = () => {
         // Refresh series data after games are added
         fetchSeriesData();
@@ -111,8 +126,9 @@ export default function Series() {
                 series={series}
                 onEdit={handleEdit}
                 onAddGames={handleAddGames}
+                currentAccount={currentAccount}
             />
-            <List sectionName="GAMES"/>
+            <List sectionName="SERIES GAMES" seriesData={series}/>
 
             <AddSeriesGames
                 isOpen={showAddGames}
@@ -125,7 +141,7 @@ export default function Series() {
                 isOpen={showEditSeries}
                 onClose={() => setShowEditSeries(false)}
                 onSuccess={handleSeriesUpdated}
-                series={series}
+                editSeries={series}
             />
         </>
     )

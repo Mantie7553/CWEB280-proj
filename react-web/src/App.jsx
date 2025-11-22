@@ -61,10 +61,10 @@ export default function App() {
                 currentAccount={currentAccount} onLogout={handleLogout}
         />
         <Routes>
-            <Route path="/" element={<Home/>} />
-            <Route path="/stats" element={<Stats/>} />
-            <Route path="/data-entry" element={<DataEntry/>}/>
-            <Route path="/series/:seriesId" element={<Series/>}/>
+            <Route path="/" element={<Home currentAccount={currentAccount}/>} />
+            <Route path="/stats" element={<Stats currentAccount={currentAccount}/>} />
+            <Route path="/data-entry" element={<DataEntry currentAccount={currentAccount}/>}/>
+            <Route path="/series/:seriesId" element={<Series currentAccount={currentAccount}/>}/>
         </Routes>
         <Login isOpen={showLogin} onClose={() => setShowLogin(false)} onSuccess={handleLoggedIn}/>
     </BrowserRouter>

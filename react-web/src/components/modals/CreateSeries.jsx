@@ -190,8 +190,8 @@ export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames
                 <form onSubmit={handleSubmit}>
                     <TextInput label="Series Name" value={seriesName} setValue={setSeriesName} />
                     <TextInput label="Series Type" value={seriesType} setValue={setSeriesType} />
-                    <DateInput label="Start Date" value={startDate} setDateTime={setStartDate} />
-                    <DateInput label="End Date" value={endDate} setDateTime={setEndDate} />
+                    <DateInput label="Start Date" dateTime={startDate} setDateTime={setStartDate} />
+                    <DateInput label="End Date" dateTime={endDate} setDateTime={setEndDate} />
                     <TextInput label="Description" value={description} setValue={setDescription} />
                     <div className="form-buttons">
                         <Button type="submit"

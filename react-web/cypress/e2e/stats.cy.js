@@ -24,15 +24,19 @@ describe('Tests for the Stats page of the application', () => {
             })
     });
 
-    it('both lists show at most 5 items per page', () => {
+    it('all lists show at most 5 items per page', () => {
         cy.get('.list-header-collapsible').eq(1).parent()
             .within(() => {
                 cy.get('.team-card').should('have.length', 5);
-            })
+            });
         cy.get('.list-header-collapsible').first().parent()
             .within(() => {
                 cy.get('.game-card').should('have.length', 5);
-            })
+            });
+        cy.get('.list-header-collapsible').eq(2).parent()
+            .within(() => {
+                cy.get('.series-card').should('have.length.at.most', 5);
+            });
     });
 
     it('win rate is shown as a decimal', () => {

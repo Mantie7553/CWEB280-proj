@@ -1,6 +1,6 @@
 import Button from "./form-parts/Button.jsx";
 
-export default function SeriesHeader({series, onEdit, onAddGames}) {
+export default function SeriesHeader({series, onEdit, onAddGames, currentAccount}) {
     if (!series) {
         return (
             <div className="series-header-container">
@@ -26,23 +26,24 @@ export default function SeriesHeader({series, onEdit, onAddGames}) {
             <h4 className="series-desc">{series.description || ''}</h4>
             <div className="series-text">
                 <div>
-                    <p>{series.type || 'SERIES TYPE'}</p>
+                    <p id="series-type">{series.type || 'SERIES TYPE'}</p>
                 </div>
                 <div>
-                    <p>{`TOTAL GAMES: ${series.totalGames}` || 'NO GAMES'}</p>
+                    <p id="series-game-count">{`TOTAL GAMES: ${series.totalGames}` || 'NO GAMES'}</p>
                 </div>
                 <div>
-                    <p>{`${series.start} TO ${series.end}` || 'NO DATE'}</p>
-                    <p></p>
+                    <p  id="series-dates">{`${series.start} TO ${series.end}` || 'NO DATE'}</p>
                 </div>
                 <div>
-                    <p>{status || 'UNKNOWN'}</p>
+                    <p  id="series-status">{status || 'UNKNOWN'}</p>
                 </div>
             </div>
-            <div className="series-buttons">
-                <Button onClick={onEdit} className="btn-secondary" text="EDIT"/>
-                <Button onClick={onAddGames} className="btn-secondary" text="ADD GAMES"/>
-            </div>
+            {currentAccount && (
+                <div className="series-buttons">
+                    <Button onClick={onEdit} className="btn-secondary" text="EDIT"/>
+                    <Button onClick={onAddGames} className="btn-secondary" text="ADD GAMES"/>
+                </div>
+            )}
         </div>
     )
 }

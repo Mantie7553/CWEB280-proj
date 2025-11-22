@@ -13,7 +13,7 @@ describe('Tests for the home page of the application', () => {
         cy.get('.navbar-link').eq(2).should('contain.text', 'LOGIN');
     });
 
-    it('all three lists are displayed', () => {
+    it('all lists are displayed', () => {
         cy.get('.list-section-team').should('exist');
         cy.get('.list-section-team').first().within(() => {
             cy.get('.list-header').should('contain.text', 'TOP TEAMS');

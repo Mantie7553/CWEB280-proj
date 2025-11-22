@@ -7,7 +7,7 @@ import { useState } from "react";
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function Stats() {
+export default function Stats({currentAccount}) {
     const [showGames, setShowGames] = useState(true);
     const [showTeams, setShowTeams] = useState(true);
     const [showSeries, setShowSeries] = useState(true);
@@ -22,7 +22,7 @@ export default function Stats() {
                     <span>GAMES</span>
                     <span className="collapse-icon">{showGames ? '▼' : '▶'}</span>
                 </div>
-                {showGames && <List sectionName="GAMES"/>}
+                {showGames && <List sectionName="GAMES" currentAccount={currentAccount}/>}
             </div>
 
             <div className="list-section">
@@ -33,7 +33,7 @@ export default function Stats() {
                     <span>TEAMS</span>
                     <span className="collapse-icon">{showTeams ? '▼' : '▶'}</span>
                 </div>
-                {showTeams && <List sectionName="TEAMS"/>}
+                {showTeams && <List sectionName="TEAMS" currentAccount={currentAccount}/>}
             </div>
 
             <div className="list-section">
@@ -44,7 +44,7 @@ export default function Stats() {
                     <span>SERIES</span>
                     <span className="collapse-icon">{showSeries ? '▼' : '▶'}</span>
                 </div>
-                {showSeries && <List sectionName="SERIES"/>}
+                {showSeries && <List sectionName="SERIES" currentAccount={currentAccount}/>}
             </div>
         </div>
     )

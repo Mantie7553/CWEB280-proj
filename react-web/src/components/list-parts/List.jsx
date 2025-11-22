@@ -22,7 +22,7 @@ import Series from "./Series.jsx";
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
-export default function List({sectionName, canSelect, selectedGames, setSelectedGames}) {
+export default function List({sectionName, canSelect, selectedGames, setSelectedGames, seriesData, currentAccount}) {
     const navigate = useNavigate();
 
     const[info, setInfo] = useState([]);
@@ -36,7 +36,7 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
     const [showSeriesModal, setShowSeriesModal] = useState(false);
     const [editingSeries, setEditingSeries] = useState(null);
 
-    const showHeader = !['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
+    const showHeader = !['GAMES', 'TEAMS', 'SERIES', 'SERIES GAMES'].includes(sectionName);
     const showPagination = ['GAMES', 'TEAMS', 'SERIES'].includes(sectionName);
 
     /**
@@ -44,7 +44,17 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
      * and sets the info array, total page count, current page, and total item count
      */
     useEffect(() => {
-        const fetchList = () => {
+
+        // Return early if we can use the games from a specific series
+        if (sectionName === 'SERIES GAMES' && seriesData && seriesData.games) {
+            setInfo(seriesData.games);
+            setLoading(false);
+            setTotalPages(1);
+            setTotalItems(seriesData.games.length);
+            return;
+        }
+
+            const fetchList = () => {
 
             setLoading(true);
             setError(null);
@@ -73,6 +83,8 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
                 case "FEATURED SERIES":
                     url = `${import.meta.env.VITE_API_BASE_URL}/series/1?filter=featured`;
                     break;
+                case "SERIES GAMES":
+                    return;
             }
             fetch(url)
                 .then((resp) => {
@@ -126,7 +138,7 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
         };
 
         fetchList()
-    }, [sectionName, currentPage]);
+    }, [sectionName, currentPage, seriesData]);
 
     /**
      * Generic re-fetch function
@@ -182,8 +194,19 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
         }
     };
 
+    /**
+     * Handles the two types of series clicks
+     *  Must be logged in to open the series edit
+     *  Clicking a Series in the SERIES list on the stats page will open the edit page
+     *  Clicking a Series in the FEATURED SERIES list will open the details page
+     * @param seriesId
+     */
     const handleSeriesClick = (seriesId) => {
         if (sectionName === 'SERIES') {
+            if (!currentAccount) {
+                alert('Please log in to edit series');
+                return;
+            }
             // On SERIES list, clicking opens edit modal
             fetchSeriesForEdit(seriesId);
         } else {
@@ -196,6 +219,10 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
      * Handle clicking on a game to edit it
      */
     const handleGameClick = (game) => {
+        if (!currentAccount) {
+            alert('Please log in to edit games');
+            return;
+        }
         // Navigate to DataEntry with the game data
         navigate('/data-entry', { state: { editGame: game } });
     }
@@ -204,6 +231,10 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
      * Handle clicking on a team to edit it
      */
     const handleTeamClick = (team) => {
+        if (!currentAccount) {
+            alert('Please log in to edit teams');
+            return;
+        }
         setEditingTeam(team);
         setShowTeamModal(true);
     }
@@ -233,7 +264,7 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
     };
 
     /**
-     * Displays a list while data is being fetched from the database
+     * Displays a placeholder list while data is being fetched from the database
      */
     if (loading) {
         return (
@@ -252,7 +283,11 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
         );
     }
 
-
+    /**
+     * Adds / removes a selected game to the list for adding when used to add
+     *  games to a series
+     * @param gameId
+     */
     const handleGameSelect = (gameId) => {
         if (selectedGames.includes(gameId)) {
             setSelectedGames(selectedGames.filter(id => id !== gameId));
@@ -288,7 +323,7 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
     }
 
     /**
-     * Displays an empty list with a message that there is nothing to return
+     * Displays an empty list with a message that there is nothing to show
      */
     if (info.length === 0) {
         return (
@@ -362,8 +397,8 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
                         canSelect={canSelect}
                         isSelected={selectedGames && selectedGames.includes(item.id)}
                         onSelect={handleGameSelect}
-                        clickable={sectionName === 'GAMES'}
-                        onClick={sectionName === 'GAMES' ? handleGameClick : undefined}
+                        clickable={sectionName === 'GAMES' && !canSelect}
+                        onClick={sectionName === 'GAMES' && !canSelect ? handleGameClick : undefined}
                     />
                 }
             })}
