@@ -15,6 +15,7 @@ export default function Login({isOpen, onClose, onSuccess}) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -60,10 +61,18 @@ export default function Login({isOpen, onClose, onSuccess}) {
                 return resp.json();
             })
             .then(data => {
-                onSuccess({
+                const accountInfo = {
                     id: data.userId,
                     email: data.email
-                });
+                }
+
+                if (rememberMe) {
+                    localStorage.setItem('currentAccount', JSON.stringify(accountInfo));
+                } else {
+                    sessionStorage.setItem('currentAccount', JSON.stringify(accountInfo));
+                }
+
+                onSuccess(accountInfo);
                 handleClose();
             })
             .catch((err) => {
@@ -207,6 +216,18 @@ export default function Login({isOpen, onClose, onSuccess}) {
                            minLength={isRegistering ? 8 : undefined}
                     />
                 </div>
+                {!isRegistering && (
+                    <div className="form-group">
+                        <label style={{cursor: 'pointer'}}>
+                            <input
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
+                            <span style={{color: 'black'}}>Remember me</span>
+                        </label>
+                    </div>
+                )}
 
                 <div className="form-buttons">
                     <button type="submit" className="btn-primary" disabled={loading}>

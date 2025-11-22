@@ -24,7 +24,8 @@ export default function App() {
      * Saves the current account to a localStorage item or uses the one that is already set
      */
     useEffect(() => {
-        const savedAccount = localStorage.getItem('currentAccount');
+        const savedAccount = localStorage.getItem('currentAccount') ||
+                            sessionStorage.getItem('currentAccount');
         if (savedAccount) {
             setCurrentAccount(JSON.parse(savedAccount));
             setShowDataEntry(true);
@@ -39,8 +40,6 @@ export default function App() {
     const handleLoggedIn = (accountInfo) => {
         setShowDataEntry(true);
         setCurrentAccount(accountInfo);
-
-        localStorage.setItem('currentAccount', JSON.stringify(accountInfo));
     }
 
     /**
@@ -52,6 +51,7 @@ export default function App() {
         setCurrentAccount(null);
 
         localStorage.removeItem('currentAccount');
+        sessionStorage.removeItem('currentAccount');
     }
 
     return (
