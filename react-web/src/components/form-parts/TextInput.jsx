@@ -1,4 +1,10 @@
-
+/**
+ * A shared component for all text inputs going forward
+ * @param props a labels text, the inputs value, and a function to set that value
+ * @returns {JSX.Element}
+ * @constructor
+ * @author Mantie7553
+ */
 export default function TextInput(props) {
     return (
         <div className="form-group">

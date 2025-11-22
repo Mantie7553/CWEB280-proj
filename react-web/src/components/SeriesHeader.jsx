@@ -1,5 +1,15 @@
 import Button from "./form-parts/Button.jsx";
 
+/**
+ * Header used to display information for a series
+ * @param series the data for a given series
+ * @param onEdit function called when editing a series
+ * @param onAddGames function called when adding games to a series
+ * @param currentAccount the currently logged in account
+ * @returns {JSX.Element}
+ * @constructor
+ * @author Mantie7553
+ */
 export default function SeriesHeader({series, onEdit, onAddGames, currentAccount}) {
     if (!series) {
         return (

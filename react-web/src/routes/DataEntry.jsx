@@ -13,7 +13,6 @@ import {useLocation, useNavigate} from "react-router-dom";
  */
 export default function DataEntry() {
     const location = useLocation();
-    const navigate = useNavigate();
 
     const [showTeamAdd, setShowTeamAdd] = useState(false);
     const [showCreateSeries, setShowCreateSeries] = useState(false);
@@ -120,7 +119,7 @@ export default function DataEntry() {
     ];
 
     /**
-     * Sets all values back to their defaults
+     * Sets all values back to defaults
      */
     const handleClear = () => {
         setDateTime('');
@@ -134,7 +133,7 @@ export default function DataEntry() {
 
     /**
      * Alerts a user when data has not been entered
-     *  else posts the new data to the database
+     *  else saves the new data (update or create) to the database
      */
     const handleSave = () => {
         if (!dateTime) {
@@ -194,6 +193,7 @@ export default function DataEntry() {
 
     /**
      * Delete the current game
+     *  Asks user for confirmation before deletion
      */
     const handleDelete = () => {
         if (!editingGameId) {

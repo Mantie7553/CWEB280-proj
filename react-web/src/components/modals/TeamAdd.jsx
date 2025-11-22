@@ -89,6 +89,7 @@ export default function TeamAdd({isOpen, onClose, onSuccess, editTeam = null}) {
 
     /**
      * Handles deleting the team
+     *  Asks user to confirm deletion
      */
     const handleDelete = () => {
         if (!isEditMode || !editTeam) {
@@ -125,7 +126,7 @@ export default function TeamAdd({isOpen, onClose, onSuccess, editTeam = null}) {
 
     /**
      * Handles the submission of a new team
-     * @param e
+     * @param e the submission to prevent
      * @returns {Promise<void>}
      */
     const handleSubmit = async (e) => {

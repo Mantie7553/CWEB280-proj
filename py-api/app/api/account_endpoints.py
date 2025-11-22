@@ -4,27 +4,33 @@ from google.oauth2 import id_token
 from pydantic import BaseModel
 
 from app import config
-from app.services.account_service import login_user, get_user_by_id, delete_user, create_user, google_login_or_create
+from app.services.account_service import (login_user, get_user_by_id,
+                                          delete_user, create_user,
+                                          google_login_or_create)
 
 router = APIRouter(prefix="/api/user", tags=["api"])
 
 
 class LoginRequest(BaseModel):
+    """Class for a requested login"""
     email: str
     password: str
 
 
 class LoginResponse(BaseModel):
+    """Class for the response sent back to the client."""
     userId: int
     email: str
     message: str
 
 
 class GoogleLoginRequest(BaseModel):
+    """Class for a new Google user"""
     credential: str
 
 
 class CreateUserRequest(BaseModel):
+    """Class for a new user"""
     email: str
     password: str
 
@@ -32,7 +38,7 @@ class CreateUserRequest(BaseModel):
 @router.post("/login")
 async def login(credentials: LoginRequest):
     """
-    Authenticate user with email and password
+    API endpoint for Authenticating users with email and password
     Returns user info if successful
     """
     user = login_user(credentials.email, credentials.password)
@@ -50,8 +56,8 @@ async def login(credentials: LoginRequest):
 @router.post("/google-login")
 async def google_login(request: GoogleLoginRequest):
     """
-    Login with Google OAuth.
-    Automatically creates a new account on first login.
+    API endpoint when using the Login with Google OAuth.
+    Automatically creates a new account if one does not already exist.
     """
     try:
         # Verify the Google token
@@ -89,7 +95,7 @@ async def google_login(request: GoogleLoginRequest):
 
 @router.post("/register")
 async def register(user_data: CreateUserRequest):
-    """ Create a new user account """
+    """ API endpoint for Creating a new user account """
     try:
         user = create_user(user_data.email, user_data.password)
         return {
@@ -106,7 +112,7 @@ async def register(user_data: CreateUserRequest):
 
 @router.delete("/{user_id}")
 async def delete_account(user_id: int):
-    """ Delete a user account """
+    """ API endpoint for Deleting a user account """
     success = delete_user(user_id)
 
     if not success:
@@ -120,7 +126,7 @@ async def delete_account(user_id: int):
 
 @router.get("/{user_id}")
 async def get_user(user_id: int):
-    """ Get user information by ID """
+    """ API for getting user information by a user ID """
     user = get_user_by_id(user_id)
 
     if not user:

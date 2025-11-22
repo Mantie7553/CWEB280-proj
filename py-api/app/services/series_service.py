@@ -1,8 +1,8 @@
 from datetime import date
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app import config
@@ -13,6 +13,7 @@ engine = create_engine(config.DB_PATH, echo=True, future=True)
 
 
 class SeriesData(BaseModel):
+    """A class used to represent a series data including the games it is connected to"""
     name: str
     type: str
     desc: str
@@ -210,7 +211,10 @@ def delete_series(series_id: int):
 
 
 def add_games_to_series(series_id: int, game_ids: List[int], session: Session = None):
-    """Add games to an existing series"""
+    """
+    Add games to an existing series
+    Does not allow for duplicate games
+    """
     close_session = False
     if session is None:
         session = Session(engine)

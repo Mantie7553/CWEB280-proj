@@ -2,6 +2,17 @@ import List from "../list-parts/List.jsx";
 import Button from "../form-parts/Button.jsx";
 import {useState} from "react";
 
+/**
+ * Modal used for adding games to a given series
+ *  Displays a list of all games in the database
+ * @param isOpen boolean for toggling open / closed state
+ * @param onClose function to call when the modal is closed
+ * @param onSave function to call when the information should be saved
+ * @param seriesId the id of the series the games will belong to
+ * @returns {JSX.Element|null}
+ * @constructor
+ * @author Mantie7553
+ */
 export default function AddSeriesGames({isOpen, onClose, onSave, seriesId}) {
 
     const [selectedGames, setSelectedGames] = useState([]);
@@ -10,6 +21,10 @@ export default function AddSeriesGames({isOpen, onClose, onSave, seriesId}) {
 
     if (!isOpen) return null;
 
+    /**
+     * Function called to attempt to save games to a series
+     * @returns {Promise<void>}
+     */
     const handleSave = async () => {
         if (selectedGames.length === 0) {
             setError("At least one game must be selected");
@@ -55,6 +70,9 @@ export default function AddSeriesGames({isOpen, onClose, onSave, seriesId}) {
         }
     }
 
+    /**
+     * Clears and closes the modal
+     */
     const handleCancel = () => {
         setSelectedGames([]);
         setError(null);

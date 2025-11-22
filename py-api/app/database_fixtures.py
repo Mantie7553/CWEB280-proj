@@ -5,11 +5,11 @@ from datetime import date
 
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
-import random
 from app.schemas.database_schema import Team, Game, Series, SeriesGames, User
 
 
 def gen_teams(session: Session):
+    """Generates a list of teams to start with"""
     teamsToUse = [Team(
         name="Toronto Raptors"
     ), Team(
@@ -38,6 +38,7 @@ def gen_teams(session: Session):
 
 
 def gen_games(session: Session):
+    """Generates dummy games"""
     gamesToUse = [Game(
         gameDate=date(2024, 10, 22),
         homeTeam=1,  # Raptors
@@ -183,7 +184,7 @@ def gen_games(session: Session):
         homeScore=119,
         awayScore=123
     ), Game(
-        gameDate=date(2025, 11, 20),
+        gameDate=date(2027, 11, 20),
         homeTeam=3,  # Pacers
         awayTeam=2,  # Warriors
         homeScore=111,
@@ -195,7 +196,7 @@ def gen_games(session: Session):
 
 
 def gen_series(session: Session):
-    """Generate dummy series data with various types and game associations"""
+    """Generate dummy series data"""
     seriesToUse = [Series(
         seriesName="Lakers vs Celtics Holiday Showdown",
         seriesType="Rivalry",
@@ -267,7 +268,7 @@ def gen_series(session: Session):
 
 
 def link_series_games(session: Session):
-    """Link games to series through the SeriesGames junction table"""
+    """Link games to series through the SeriesGames joining table"""
     seriesGamesToUse = [SeriesGames(seriesId=1, gameId=15), SeriesGames(seriesId=1, gameId=16),
                         SeriesGames(seriesId=2, gameId=1), SeriesGames(seriesId=2, gameId=2),
                         SeriesGames(seriesId=2, gameId=3), SeriesGames(seriesId=2, gameId=4),
@@ -306,6 +307,7 @@ def link_series_games(session: Session):
 
 
 def gen_base_users(session: Session):
+    """Generates the three base users that were previously in the front end"""
     users = [User(
         email="test@t.ca",
         password="123456Pw"

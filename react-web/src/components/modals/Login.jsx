@@ -33,6 +33,11 @@ export default function Login({isOpen, onClose, onSuccess}) {
         onClose();
     }
 
+    /**
+     * Attempts to log in a user using the
+     * users stored in the database
+     * @param e the submission to prevent
+     */
     const handleLogin = (e) => {
         e.preventDefault();
         setLoading(true);
@@ -69,6 +74,11 @@ export default function Login({isOpen, onClose, onSuccess}) {
             })
     }
 
+    /**
+     * Allows for creation of new account
+     *  given an email and password
+     * @param e the submission to prevent
+     */
     const handleRegister = (e) => {
         e.preventDefault();
         setLoading(true);
@@ -112,6 +122,12 @@ export default function Login({isOpen, onClose, onSuccess}) {
 
     }
 
+    /**
+     * Allows for authentication using Google
+     *  Creates a new account if one does not already exist
+     *  Logs into an existing account if there is one
+     * @param credentialResp
+     */
     const handleGoogle = (credentialResp) => {
         setLoading(true);
         setError('');
@@ -146,6 +162,10 @@ export default function Login({isOpen, onClose, onSuccess}) {
             })
     }
 
+    /**
+     * For displaying an error if something goes wrong
+     *  during the Google sign in
+     */
     const googleErrorHandler = () => {
         setError('Google Sign-In failed. Please try again.')
     }

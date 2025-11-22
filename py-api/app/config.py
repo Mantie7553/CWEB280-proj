@@ -1,4 +1,3 @@
-import os
 
 from dotenv import load_dotenv
 load_dotenv() #loads values from .env file if it exists !IMPORTANT .env files should NEVER be put on git

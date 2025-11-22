@@ -20,6 +20,10 @@ class ResponseUser(BaseModel):
 
 
 def login_user(email: str, password: str):
+    """
+    Handles logging in a standard user.
+    Allows a user to be logged in if they are not a Google account
+    """
     with Session(engine) as session:
         user = session.query(User)\
             .filter(User.email == email).first()
@@ -73,7 +77,7 @@ def google_login_or_create(googleId: str, email: str,):
 def create_user(email: str, password: Optional[str] = None, google_id: Optional[str] = None):
     """
     Create a new user account
-    Raises Error if email already exists
+    Raises Error if email already exists, we will only allow one user to use a single email
     """
     with Session(engine) as session:
         # Check if user already exists
@@ -132,7 +136,7 @@ def get_user_by_id(user_id: int):
 
 
 def get_user_by_email(email: str):
-    """Get user information by ID"""
+    """Get user information by an email"""
     with Session(engine) as session:
         user = session.query(User).filter(User.email == email).first()
 

@@ -3,13 +3,20 @@
  *  - Image files for logos will be stored in the /public/uploads folder after
  *  a new team has been added with a logo
  *  - Displays the team name, average point differential and win rate
+ *  - optionally allows a Team to be clickable
  * @param team an object containing attributes related to an NBA team
+ * @param onClick the function called when a Team is clicked
+ * @param clickable boolean allowing / disallowing a Team to be clicked
  * @returns {JSX.Element} displaying information for a given NBA team
  * @constructor
  * @authors Mantie7553, Kinley6573
  */
 export default function Team({team, onClick, clickable = false}) {
 
+    /**
+     * Calls the onClick function if we are allowing
+     *  the team to be clickable
+     */
     const handleCardClick = () => {
         if (clickable && onClick) {
             onClick(team);

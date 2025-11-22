@@ -1,7 +1,7 @@
 # Created 2025/10/20
 # This file handles structuring the Team table for our database
 import sqlalchemy as sa
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, create_engine, event
 
 import app.config
@@ -27,6 +27,7 @@ class Game(Base):
 
 
 class SeriesGames(Base):
+    """The constructor for the SeriesGames table that connects games to Series"""
     __tablename__ = "SeriesGames"
     seriesGameId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
     seriesId = Column(sa.Integer, sa.ForeignKey("Series.seriesId", ondelete="CASCADE"), index=True, nullable=False)
@@ -34,6 +35,7 @@ class SeriesGames(Base):
 
 
 class Series(Base):
+    """The constructor for the Series table that stores information about a series"""
     __tablename__ = "Series"
     seriesId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
     seriesName = Column(sa.String(100), nullable=False)
@@ -44,6 +46,7 @@ class Series(Base):
 
 
 class User(Base):
+    """The constructor for the User table that stores information about a user"""
     __tablename__ = "User"
     userId = Column(sa.Integer, primary_key=True, index=True, nullable=False, autoincrement=True)
     email = Column(sa.String(255), unique=True, index=True, nullable=False)

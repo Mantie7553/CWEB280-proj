@@ -1,4 +1,12 @@
-
+/**
+ * A React component used to display information for a given series
+ * in a list view
+ * @param handleSeriesClick function called when a series is clicked
+ * @param series optional series information passed in
+ * @returns {JSX.Element}
+ * @constructor
+ * @author Mantie7553
+ */
 export default function Series({handleSeriesClick, series}) {
 
     const now = new Date();

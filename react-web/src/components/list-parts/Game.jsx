@@ -6,10 +6,11 @@ import Button from "../form-parts/Button.jsx";
  *  - displays both teams score if they are greater than 0
  *  - displays the date for a game
  *  - optionally lists the following stats for both teams: win rate, average points, and average point differential
+ *  - optionally allows for selecting from a list
  * @param game an object containing attributes related to an NBA game
  * @param canSelect boolean for hiding / showing select button
- * @param isSelected
- * @param onSelect
+ * @param isSelected boolean for if it is or is not selected
+ * @param onSelect The function called when a Game is selected
  * @returns {JSX.Element} displaying information for a given NBA game
  * @constructor
  * @authors Mantie7553, Kinley6573
@@ -22,6 +23,11 @@ export default function Game({game, canSelect, isSelected, onSelect, onClick, cl
     const includesStats = homeTeam.winRate !== undefined || awayTeam.winRate !== undefined;
     const hasScores = game.awayScore !== 0 || game.homeScore !== 0;
 
+    /**
+     * Stops the main onClick
+     * Calls the onSelect with the games ID
+     * @param e
+     */
     const handleSelectClick = (e) => {
         e.stopPropagation();
         if (onSelect) {
@@ -29,6 +35,10 @@ export default function Game({game, canSelect, isSelected, onSelect, onClick, cl
         }
     }
 
+    /**
+     * Allows a user to click on the item if it is "labeled" clickable
+     *  calls on click which will open the Data Entry page with the current games data
+     */
     const handleCardClick = () => {
         if (clickable && onClick) {
             onClick(game);

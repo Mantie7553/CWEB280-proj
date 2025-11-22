@@ -15,9 +15,9 @@ import Series from "./Series.jsx";
  *  - can display loading, error, or empty list with placeholder items
  *  - pagination for a list is optional (only for TEAMS or GAMES sections)
  * @param sectionName the title / name of the current section
- * @param canSelect
- * @param selectedGames
- * @param setSelectedGames
+ * @param canSelect can an item is the list be selected or not - boolean
+ * @param selectedGames a list of games that have been selected
+ * @param setSelectedGames a function to set the list of selected games
  * @returns {JSX.Element}
  * @constructor
  * @authors Mantie7553, Kinley6573
@@ -217,6 +217,7 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
 
     /**
      * Handle clicking on a game to edit it
+     * Passed into the Game component
      */
     const handleGameClick = (game) => {
         if (!currentAccount) {
@@ -229,6 +230,7 @@ export default function List({sectionName, canSelect, selectedGames, setSelected
 
     /**
      * Handle clicking on a team to edit it
+     * Passed into the Team component
      */
     const handleTeamClick = (team) => {
         if (!currentAccount) {

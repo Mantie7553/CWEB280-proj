@@ -65,6 +65,7 @@ export default function Navbar({ setShowLogin, showDataEntry, currentAccount, on
 
     /**
      * Handles account deletion
+     *  Only works when someone is logged in
      */
     const handleDeleteAccount = () => {
         if (!currentAccount || !currentAccount.id) {

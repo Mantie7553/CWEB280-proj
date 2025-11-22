@@ -3,6 +3,17 @@ import {useEffect, useState} from "react";
 import DateInput from "../form-parts/DateInput.jsx";
 import Button from "../form-parts/Button.jsx";
 
+/**
+ * Modal used to edit and create a series
+ * @param isOpen boolean for displaying / hiding modal
+ * @param onClose function called when closing the modal
+ * @param onSuccess function called when data updates / creates successfully
+ * @param onOpenAddGames
+ * @param editSeries the series information to be edited if passed in
+ * @returns {JSX.Element|null}
+ * @constructor
+ * @author Mantie7553
+ */
 export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames, editSeries = null}) {
     const [seriesName, setSeriesName] = useState('');
     const [seriesType, setSeriesType] = useState('');
@@ -13,6 +24,11 @@ export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames
     const [error, setError] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
 
+    /**
+     * Loads in data from the series passed in
+     *  if it exists else
+     *   clears the form and sets back to create functionality
+     */
     useEffect(() => {
         if (editSeries) {
             setIsEditMode(true);
@@ -28,6 +44,11 @@ export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames
         setError(null);
     }, [editSeries]);
 
+    /**
+     * Function used to create / update a Series
+     * @param e the event to stop
+     * @returns {Promise<void>}
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -112,6 +133,12 @@ export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames
         }
     }
 
+    /**
+     * Function for deleting a Series from the database
+     *  Can only delete in edit mode
+     *  Asks for confirmation before deleting
+     * @returns {Promise<void>}
+     */
     const handleDelete = async () => {
         if (!isEditMode || !editSeries) {
             alert('No series selected to delete');
@@ -154,6 +181,9 @@ export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames
         }
     };
 
+    /**
+     * Sets all values to defaults
+     */
     const handleClear = () => {
         setSeriesName('');
         setSeriesType('');
@@ -163,6 +193,10 @@ export default function CreateSeries({isOpen, onClose, onSuccess, onOpenAddGames
         setError(null);
     }
 
+    /**
+     * Sets all values to defaults
+     *  Calls onClose function if it exists
+     */
     const handleCancel = () => {
         handleClear();
 

@@ -4,8 +4,10 @@ from fastapi import APIRouter, Query, HTTPException
 from pydantic import BaseModel
 from datetime import date
 
-from app.services.series_service import paged_series, create_series, add_games_to_series, get_series_by_id, \
-    delete_series, remove_game_from_series, update_series
+from app.services.series_service import (paged_series, create_series,
+                                         add_games_to_series, get_series_by_id,
+                                         delete_series, remove_game_from_series,
+                                         update_series)
 
 router = APIRouter(prefix="/api/series", tags=["api"])
 
@@ -33,11 +35,13 @@ class AddGamesRequest(BaseModel):
 
 @router.get("/{page}")
 async def get_series_page(page: int, filter: Optional[str] = Query(None)):
+    """API endpoint for getting a paged list of series"""
     return paged_series(page=page, filter=filter)
 
 
 @router.get("/detail/{series_id}")
 async def get_series_detail(series_id: int):
+    """API endpoint for getting a specific series details"""
     series = get_series_by_id(series_id)
     if not series:
         raise HTTPException(status_code=404, detail="Series not found")
@@ -46,6 +50,7 @@ async def get_series_detail(series_id: int):
 
 @router.post("/")
 async def create_new_series(request: CreateSeriesRequest):
+    """API endpoint for creating a new series"""
     try:
         series_id = create_series(
             name=request.name,
@@ -62,7 +67,7 @@ async def create_new_series(request: CreateSeriesRequest):
 
 @router.put("/{series_id}")
 async def update_existing_series(series_id: int, request: UpdateSeriesRequest):
-    """Update an existing series"""
+    """API endpoint for updating an existing series"""
     try:
         updated = update_series(
             series_id=series_id,
@@ -81,7 +86,7 @@ async def update_existing_series(series_id: int, request: UpdateSeriesRequest):
 
 @router.delete("/{series_id}")
 async def delete_existing_series(series_id: int):
-    """Delete a series and all its game associations"""
+    """API endpoint for deleting an existing series and any connections to any games"""
     try:
         deleted = delete_series(series_id)
         if not deleted:
@@ -93,6 +98,7 @@ async def delete_existing_series(series_id: int):
 
 @router.post("/{series_id}/games")
 async def add_games(series_id: int, request: AddGamesRequest):
+    """API endpoint for adding games to a series"""
     try:
         add_games_to_series(series_id, request.gameIds)
         return {"success": True, "message": f"Added {len(request.gameIds)} games to series"}
@@ -102,7 +108,7 @@ async def add_games(series_id: int, request: AddGamesRequest):
 
 @router.delete("/{series_id}/games/{game_id}")
 async def remove_game(series_id: int, game_id: int):
-    """Remove a game from a series"""
+    """API endpoint to Remove a game from a series"""
     try:
         removed = remove_game_from_series(series_id, game_id)
         if not removed:

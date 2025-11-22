@@ -1,4 +1,3 @@
-import Button from "../components/form-parts/Button.jsx";
 import SeriesHeader from "../components/SeriesHeader.jsx";
 import List from "../components/list-parts/List.jsx";
 import {useNavigate, useParams} from "react-router-dom";
@@ -6,6 +5,14 @@ import {useEffect, useState} from "react";
 import AddSeriesGames from "../components/modals/AddSeriesGames.jsx";
 import CreateSeries from "../components/modals/CreateSeries.jsx";
 
+/**
+ * Page displaying a specific Series contents
+ *  Including the games that belong to that series
+ * @param currentAccount the currently logged in account
+ * @returns {JSX.Element}
+ * @constructor
+ * @author Mantie7553
+ */
 export default function Series({currentAccount}) {
     const {seriesId} = useParams();
     const {navigate} = useNavigate();
@@ -66,21 +73,24 @@ export default function Series({currentAccount}) {
     };
 
     /**
-     *
+     * Refreshes data for the series after a game has been added
+     *  hides the add games modal
      */
     const handleGamesAdded = () => {
-        // Refresh series data after games are added
         fetchSeriesData();
         setShowAddGames(false);
     };
 
+    /**
+     * Refreshes data for the series after its information has been updated
+     *  hides the edit / create Series modal
+     */
     const handleSeriesUpdated = () => {
-        // Refresh series data after edit
         fetchSeriesData();
         setShowEditSeries(false);
     };
 
-    // Loading state
+    // Display simple loading message
     if (loading) {
         return (
             <div className="series-page">
@@ -91,7 +101,7 @@ export default function Series({currentAccount}) {
         );
     }
 
-    // Error state
+    // Display an error and a way to easily leave the page
     if (error) {
         return (
             <div className="series-page">
@@ -106,7 +116,7 @@ export default function Series({currentAccount}) {
         );
     }
 
-    // No series found
+    // Display a simple message that no data was found
     if (!series) {
         return (
             <div className="series-page">

@@ -1,10 +1,11 @@
 import List from "../components/list-parts/List.jsx";
 
 /**
- * Home page that displays three lists for the:
+ * Home page that displays four lists for the:
  *  - top teams (limited to 5) - sorted by win rate
  *  - upcoming games (limited to 5)
  *  - recent games (limited to 5)
+ *  - featured series (limited to 5)
  * @returns {JSX.Element}
  * @constructor
  * @authors Mantie7553, Kinley6573
